@@ -20,15 +20,15 @@
         extend: {
           colors: {
             brand: {
-              skyLight: '#e0f2fe',      // Crisp Light Blue
-              skyCard: '#f0f9ff',       // Soft Light Blue Surface
+              skyLight: '#e0f2fe',      // Clean Crisp Light Blue
+              skyCard: '#f0f9ff',       // Light Blue Surface
               skyBorder: '#bae6fd',     // Blue Border
               blueAccent: '#0284c7',    // Refined Blue
               blueDark: '#0369a1',      // Deep Royal Blue
-              orangeLight: '#ffedd5',   // Crisp Light Orange
-              orangeCard: '#fff7ed',    // Soft Light Orange Surface
+              orangeLight: '#ffedd5',   // Clean Crisp Light Orange
+              orangeCard: '#fff7ed',    // Light Orange Surface
               orangeBorder: '#fed7aa',  // Orange Border
-              orangeAccent: '#f97316',  // Warm Orange
+              orangeAccent: '#ea580c',  // Warm Orange Accent
               orangeDark: '#c2410c',    // Deep Burnt Orange
               deepNavy: '#0f172a',
             },
@@ -45,17 +45,20 @@
   <style>
     body {
       font-family: 'Plus Jakarta Sans', sans-serif;
-      background-color: #fafaf9;
+      background-color: #f8fafc;
       color: #0f172a;
+      overflow-x: hidden;
+      word-break: break-word;
     }
     .font-royal {
       font-family: 'Cinzel', serif;
     }
-    /* Proper single-line alignment for taskbar */
+    /* Proper single-line navigation */
     .taskbar-nav {
       display: flex;
       align-items: center;
       white-space: nowrap;
+      flex-shrink: 0;
     }
     @media print {
       body * {
@@ -80,70 +83,70 @@
   <!-- ======================================================== -->
   <!-- TOP ANNOUNCEMENT BAR (LIGHT ORANGE SECTION)              -->
   <!-- ======================================================== -->
-  <div class="bg-brand-orangeLight border-b border-brand-orangeBorder py-2.5 px-4 text-center text-xs md:text-sm font-medium text-brand-orangeDark flex items-center justify-center gap-3">
-    <span class="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-semibold bg-orange-200 text-orange-800">
-      Wedding Season
+  <div class="bg-brand-orangeLight border-b border-brand-orangeBorder py-2 px-3 text-center text-xs md:text-sm font-medium text-brand-orangeDark flex items-center justify-center gap-2">
+    <span class="inline-flex items-center px-2 py-0.5 rounded-full text-[11px] font-bold bg-orange-200 text-orange-900 shrink-0">
+      Royal Atelier
     </span>
-    <span>Royal AI &amp; Digital Invitations starting at ₹1,199 • Direct WhatsApp Support: <strong class="underline font-bold">+91 97239 39407</strong></span>
+    <span class="truncate">AI &amp; Digital Wedding Invitations starting at ₹1,199 • WhatsApp: <strong class="underline font-bold">+91 97239 39407</strong></span>
   </div>
 
   <!-- ======================================================== -->
   <!-- PRIMARY TASKBAR & HEADER (LIGHT BLUE SECTION)            -->
-  <!-- PROPER SINGLE-LINE ALIGNMENT                             -->
+  <!-- PROPER SINGLE-LINE ALIGNMENT & RESPONSIVE PADDING        -->
   <!-- ======================================================== -->
   <header class="sticky top-0 z-40 bg-brand-skyLight border-b border-brand-skyBorder shadow-sm">
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-      <div class="flex items-center justify-between h-20">
+    <div class="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8">
+      <div class="flex items-center justify-between h-20 gap-2">
         
         <!-- Royal Monogram Logo (Mixture of D & R) -->
-        <a href="javascript:void(0)" onclick="navigateTo('home')" class="flex items-center gap-3 group flex-shrink-0">
-          <div class="w-12 h-12 rounded-xl bg-white border-2 border-brand-skyBorder shadow-sm flex items-center justify-center p-1 group-hover:border-brand-orangeAccent transition-colors">
+        <a href="javascript:void(0)" onclick="navigateTo('home')" class="flex items-center gap-2.5 group shrink-0">
+          <div class="w-11 h-11 sm:w-12 sm:h-12 rounded-xl bg-white border-2 border-brand-skyBorder shadow-sm flex items-center justify-center p-1 group-hover:border-brand-orangeAccent transition-colors">
             <!-- Intertwined DR Monogram SVG -->
             <svg viewBox="0 0 100 100" class="w-full h-full">
               <rect x="3" y="3" width="94" height="94" rx="14" fill="none" stroke="#0284c7" stroke-width="2.5" stroke-dasharray="4 3"/>
               <!-- Letter D (Royal Blue) -->
               <path d="M26 22 L26 78 M26 22 C 54 22, 60 48, 26 50" fill="none" stroke="#0369a1" stroke-width="8" stroke-linecap="round"/>
               <!-- Letter R entwined (Royal Orange) -->
-              <path d="M46 38 C 66 38, 76 50, 58 62 L74 78" fill="none" stroke="#f97316" stroke-width="7.5" stroke-linecap="round" stroke-linejoin="round"/>
+              <path d="M46 38 C 66 38, 76 50, 58 62 L74 78" fill="none" stroke="#ea580c" stroke-width="7.5" stroke-linecap="round" stroke-linejoin="round"/>
               <circle cx="50" cy="50" r="3" fill="#0284c7"/>
             </svg>
           </div>
           <div class="flex flex-col">
-            <span class="font-royal text-xl sm:text-2xl font-bold tracking-wider text-brand-deepNavy leading-none">
+            <span class="font-royal text-base sm:text-xl font-bold tracking-wider text-brand-deepNavy leading-tight whitespace-nowrap">
               DESIGNS BY RAJORA
             </span>
-            <span class="text-[9px] tracking-widest text-brand-blueDark font-bold uppercase mt-1">Royal AI Wedding Stationery</span>
+            <span class="text-[8px] sm:text-[9px] tracking-widest text-brand-blueDark font-bold uppercase">Royal AI Wedding Stationery</span>
           </div>
         </a>
 
         <!-- Desktop Navigation: Straight Taskbar in One Proper Line -->
-        <nav class="hidden lg:flex items-center space-x-6 text-sm font-semibold taskbar-nav">
+        <nav class="hidden xl:flex items-center space-x-6 text-sm font-semibold taskbar-nav">
           <button onclick="navigateTo('home')" class="text-slate-800 hover:text-brand-blueAccent transition-colors">Home</button>
           <button onclick="navigateTo('shop')" class="text-slate-800 hover:text-brand-blueAccent transition-colors">Shop Invitations</button>
           <button onclick="filterCategory('Video'); navigateTo('shop')" class="text-slate-800 hover:text-brand-blueAccent transition-colors">Wedding Video Invitations</button>
           <button onclick="navigateTo('customizer')" class="text-slate-800 hover:text-brand-blueAccent transition-colors">Bespoke Customizer</button>
           <button onclick="navigateTo('about')" class="text-slate-800 hover:text-brand-blueAccent transition-colors">About Us</button>
-          <a href="https://wa.me/919723939407" target="_blank" class="text-brand-orangeDark font-bold hover:underline flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-orange-100/80 border border-orange-200">
+          <a href="https://wa.me/919723939407" target="_blank" class="text-brand-orangeDark font-bold hover:underline flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-orange-100/90 border border-orange-200">
             <i data-lucide="phone-call" class="w-3.5 h-3.5"></i> +91 97239 39407
           </a>
         </nav>
 
         <!-- Right Quick Actions -->
-        <div class="flex items-center gap-3 flex-shrink-0">
+        <div class="flex items-center gap-2 sm:gap-3 shrink-0">
           <!-- Admin Dashboard Switch -->
-          <button onclick="navigateTo('admin')" title="Live Admin Console" class="p-2.5 rounded-xl bg-white text-slate-700 hover:text-brand-orangeDark hover:border-orange-300 border border-brand-skyBorder transition shadow-sm flex items-center gap-1 text-xs font-bold">
+          <button onclick="navigateTo('admin')" title="Live Admin Console" class="p-2 sm:px-3 sm:py-2 rounded-xl bg-white text-slate-800 hover:text-brand-orangeDark hover:border-orange-300 border border-brand-skyBorder transition shadow-sm flex items-center gap-1.5 text-xs font-bold">
             <i data-lucide="shield" class="w-4 h-4 text-brand-blueAccent"></i>
             <span class="hidden sm:inline">Admin</span>
           </button>
 
           <!-- Shopping Cart Drawer Trigger -->
-          <button onclick="toggleCartDrawer(true)" class="relative p-2.5 rounded-xl bg-white text-brand-blueDark border border-brand-skyBorder hover:border-brand-blueAccent transition shadow-sm">
+          <button onclick="toggleCartDrawer(true)" class="relative p-2 sm:p-2.5 rounded-xl bg-white text-brand-blueDark border border-brand-skyBorder hover:border-brand-blueAccent transition shadow-sm">
             <i data-lucide="shopping-bag" class="w-5 h-5"></i>
             <span id="cart-counter" class="absolute -top-1.5 -right-1.5 w-5 h-5 bg-brand-orangeAccent text-white text-[11px] font-bold rounded-full flex items-center justify-center shadow">0</span>
           </button>
 
           <!-- Mobile Hamburger -->
-          <button onclick="toggleMobileNav()" class="lg:hidden p-2.5 rounded-xl bg-white text-slate-700 border border-brand-skyBorder">
+          <button onclick="toggleMobileNav()" class="xl:hidden p-2 rounded-xl bg-white text-slate-700 border border-brand-skyBorder" aria-label="Toggle navigation">
             <i data-lucide="menu" class="w-5 h-5"></i>
           </button>
         </div>
@@ -152,14 +155,14 @@
     </div>
 
     <!-- Mobile Responsive Dropdown Navigation -->
-    <div id="mobile-nav" class="hidden lg:hidden bg-brand-skyLight border-t border-brand-skyBorder px-5 py-4 space-y-2.5">
-      <button onclick="navigateTo('home'); toggleMobileNav()" class="block w-full text-left py-2 font-bold text-slate-800">Home</button>
-      <button onclick="navigateTo('shop'); toggleMobileNav()" class="block w-full text-left py-2 font-semibold text-slate-800">Shop Invitations</button>
-      <button onclick="filterCategory('Video'); navigateTo('shop'); toggleMobileNav()" class="block w-full text-left py-2 font-semibold text-slate-800">Wedding Video Invitations</button>
-      <button onclick="navigateTo('customizer'); toggleMobileNav()" class="block w-full text-left py-2 font-semibold text-slate-800">Bespoke Customizer</button>
-      <button onclick="navigateTo('about'); toggleMobileNav()" class="block w-full text-left py-2 font-semibold text-slate-800">About Us</button>
-      <a href="https://wa.me/919723939407" target="_blank" class="block w-full text-left py-2 font-bold text-brand-orangeDark">+91 97239 39407 (WhatsApp Support)</a>
-      <button onclick="navigateTo('admin'); toggleMobileNav()" class="block w-full text-left py-2 font-bold text-brand-blueDark">Admin Live Console</button>
+    <div id="mobile-nav" class="hidden xl:hidden bg-brand-skyLight border-t border-brand-skyBorder px-5 py-4 space-y-2.5 shadow-lg">
+      <button onclick="navigateTo('home'); toggleMobileNav()" class="block w-full text-left py-2 font-bold text-slate-800 text-sm">Home</button>
+      <button onclick="navigateTo('shop'); toggleMobileNav()" class="block w-full text-left py-2 font-semibold text-slate-800 text-sm">Shop Invitations</button>
+      <button onclick="filterCategory('Video'); navigateTo('shop'); toggleMobileNav()" class="block w-full text-left py-2 font-semibold text-slate-800 text-sm">Wedding Video Invitations</button>
+      <button onclick="navigateTo('customizer'); toggleMobileNav()" class="block w-full text-left py-2 font-semibold text-slate-800 text-sm">Bespoke Customizer</button>
+      <button onclick="navigateTo('about'); toggleMobileNav()" class="block w-full text-left py-2 font-semibold text-slate-800 text-sm">About Us</button>
+      <a href="https://wa.me/919723939407" target="_blank" class="block w-full text-left py-2 font-bold text-brand-orangeDark text-sm">+91 97239 39407 (WhatsApp Support)</a>
+      <button onclick="navigateTo('admin'); toggleMobileNav()" class="block w-full text-left py-2 font-bold text-brand-blueDark text-sm">Admin Live Console</button>
     </div>
   </header>
 
@@ -199,17 +202,17 @@
               </button>
             </div>
             <!-- Trust badges -->
-            <div class="pt-6 border-t border-sky-200 flex flex-wrap items-center gap-6 text-xs font-semibold text-slate-700">
+            <div class="pt-6 border-t border-sky-200 flex flex-wrap items-center gap-4 sm:gap-6 text-xs font-semibold text-slate-700">
               <div class="flex items-center gap-2">
-                <i data-lucide="clock" class="w-4 h-4 text-brand-blueDark"></i>
+                <i data-lucide="clock" class="w-4 h-4 text-brand-blueDark shrink-0"></i>
                 <span>Fast 12-24 Hr Turnaround</span>
               </div>
               <div class="flex items-center gap-2">
-                <i data-lucide="file-check" class="w-4 h-4 text-brand-blueDark"></i>
-                <span>Lossless PDF & Ultra-HD MP4</span>
+                <i data-lucide="file-check" class="w-4 h-4 text-brand-blueDark shrink-0"></i>
+                <span>Lossless PDF &amp; Ultra-HD MP4</span>
               </div>
               <div class="flex items-center gap-2">
-                <i data-lucide="message-circle" class="w-4 h-4 text-emerald-600"></i>
+                <i data-lucide="message-circle" class="w-4 h-4 text-emerald-600 shrink-0"></i>
                 <span>WhatsApp Delivery: +91 97239 39407</span>
               </div>
             </div>
@@ -1140,9 +1143,9 @@
       <!-- Support & Official Inquiries -->
       <div class="space-y-3">
         <h3 class="font-royal text-sm font-bold text-slate-900">Official Inquiries</h3>
-        <p class="text-xs text-slate-700">Email: <br><strong class="text-slate-900">designs.by.rajora01@gmail.com</strong></p>
+        <p class="text-xs text-slate-700">Email: <br><strong class="text-slate-900 break-all">designs.by.rajora01@gmail.com</strong></p>
         <p class="text-xs text-slate-700">Phone &amp; WhatsApp: <br><strong class="text-slate-900">+91 97239 39407</strong></p>
-        <p class="text-xs text-slate-700">UPI Payment: <br><strong class="font-mono text-slate-900">geetakatarmal2001@okaxis</strong></p>
+        <p class="text-xs text-slate-700">UPI Payment: <br><strong class="font-mono text-slate-900 break-all">geetakatarmal2001@okaxis</strong></p>
       </div>
 
       <!-- Legal Policies -->
