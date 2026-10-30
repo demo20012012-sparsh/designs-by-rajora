@@ -30,6 +30,8 @@
               orangeBorder: '#fed7aa',  // Orange Border
               orangeAccent: '#ea580c',  // Warm Orange Accent
               orangeDark: '#c2410c',    // Deep Burnt Orange
+              mintLight: '#ecfdf5',     // Soft Mint Accent Surface
+              mintBorder: '#a7f3d0',
               deepNavy: '#0f172a',
             },
           },
@@ -133,8 +135,8 @@
 
         <!-- Right Quick Actions -->
         <div class="flex items-center gap-2 sm:gap-3 shrink-0">
-          <!-- Admin Dashboard Switch -->
-          <button onclick="navigateTo('admin')" title="Live Admin Console" class="p-2 sm:px-3 sm:py-2 rounded-xl bg-white text-slate-800 hover:text-brand-orangeDark hover:border-orange-300 border border-brand-skyBorder transition shadow-sm flex items-center gap-1.5 text-xs font-bold">
+          <!-- Admin Dashboard Switch (Password Protected) -->
+          <button onclick="openAdminAuthModal()" title="Live Admin Console" class="p-2 sm:px-3 sm:py-2 rounded-xl bg-white text-slate-800 hover:text-brand-orangeDark hover:border-orange-300 border border-brand-skyBorder transition shadow-sm flex items-center gap-1.5 text-xs font-bold">
             <i data-lucide="shield" class="w-4 h-4 text-brand-blueAccent"></i>
             <span class="hidden sm:inline">Admin</span>
           </button>
@@ -162,7 +164,7 @@
       <button onclick="navigateTo('customizer'); toggleMobileNav()" class="block w-full text-left py-2 font-semibold text-slate-800 text-sm">Bespoke Customizer</button>
       <button onclick="navigateTo('about'); toggleMobileNav()" class="block w-full text-left py-2 font-semibold text-slate-800 text-sm">About Us</button>
       <a href="https://wa.me/919723939407" target="_blank" class="block w-full text-left py-2 font-bold text-brand-orangeDark text-sm">+91 97239 39407 (WhatsApp Support)</a>
-      <button onclick="navigateTo('admin'); toggleMobileNav()" class="block w-full text-left py-2 font-bold text-brand-blueDark text-sm">Admin Live Console</button>
+      <button onclick="openAdminAuthModal(); toggleMobileNav()" class="block w-full text-left py-2 font-bold text-brand-blueDark text-sm">Admin Live Console</button>
     </div>
   </header>
 
@@ -693,11 +695,11 @@
               <input type="text" id="buyer-address" placeholder="e.g. Gujarat, India" class="w-full p-2.5 rounded-xl border border-slate-300 text-sm">
             </div>
 
-            <!-- Online Payment Section (Light Blue Surface) -->
+            <!-- Online Payment Section (Light Blue Surface) with Dynamic UPI QR Code -->
             <div class="pt-6 border-t border-slate-200">
               <h2 class="font-bold text-lg text-slate-900 mb-3 flex items-center justify-between">
                 <span>Verified Online Payment</span>
-                <span class="text-xs bg-emerald-100 text-emerald-800 font-semibold px-2.5 py-0.5 rounded-full">Fast Processing</span>
+                <span class="text-xs bg-emerald-100 text-emerald-800 font-semibold px-2.5 py-0.5 rounded-full">Instant Verification</span>
               </h2>
 
               <div class="bg-brand-skyLight border-2 border-brand-skyBorder rounded-2xl p-5 space-y-4">
@@ -710,14 +712,28 @@
                   geetakatarmal2001@okaxis
                 </div>
 
+                <!-- Dynamic QR Code Container for Scan & Pay -->
+                <div class="bg-white p-4 rounded-xl border border-sky-200 text-center space-y-2.5 flex flex-col items-center justify-center">
+                  <div class="flex items-center gap-1.5 text-xs font-bold text-brand-blueDark">
+                    <i data-lucide="qr-code" class="w-4 h-4"></i>
+                    <span>Scan &amp; Pay via Any UPI App</span>
+                  </div>
+                  <div class="p-2 bg-white rounded-lg border-2 border-dashed border-sky-300 shadow-sm inline-block">
+                    <img id="checkout-upi-qr" src="" alt="Scan UPI QR Code" class="w-40 h-40 object-contain mx-auto" />
+                  </div>
+                  <p class="text-[11px] text-slate-500">
+                    Scan using Google Pay, PhonePe, Paytm, or BHIM. Amount: <span id="qr-payable-amount" class="font-bold text-brand-orangeDark">₹0</span>
+                  </p>
+                </div>
+
                 <p class="text-xs text-slate-600">
-                  Pay seamlessly using Google Pay, PhonePe, Paytm, BHIM, or any UPI banking app to official merchant VPA: <strong class="text-slate-800">geetakatarmal2001@okaxis</strong>.
+                  After payment, enter your 12-digit UPI transaction reference or UTR number below to register your order.
                 </p>
 
                 <div>
                   <label class="block text-xs font-semibold text-slate-800 mb-1">UPI Transaction Reference / UTR Number *</label>
                   <input type="text" id="buyer-utr" required placeholder="e.g. 402918239012 (12-digit UPI Ref ID)" class="w-full p-2.5 rounded-xl border border-sky-300 bg-white text-sm">
-                  <span class="text-[10px] text-slate-500">Enter from your payment app after completing transfer.</span>
+                  <span class="text-[10px] text-slate-500">Find this in your payment app transaction history.</span>
                 </div>
               </div>
             </div>
@@ -785,282 +801,304 @@
     </section>
 
     <!-- ========================================== -->
-    <!-- VIEW 7: ORDER CONFIRMATION & INVOICE VIEW  -->
+    <!-- VIEW 7: ORDER CONFIRMATION & BILL / INVOICE -->
     <!-- ========================================== -->
     <section id="view-order-success" class="view-panel hidden py-12 px-4 sm:px-6 max-w-4xl mx-auto">
-      <div class="bg-white rounded-3xl border border-slate-200 shadow-lg p-6 sm:p-10 text-center space-y-6">
-        
-        <div class="w-16 h-16 bg-emerald-100 text-emerald-600 rounded-full flex items-center justify-center mx-auto">
+      <div class="text-center space-y-3 mb-8">
+        <div class="w-16 h-16 rounded-full bg-emerald-100 text-emerald-600 mx-auto flex items-center justify-center">
           <i data-lucide="check" class="w-8 h-8"></i>
         </div>
-
-        <div>
-          <span class="text-xs uppercase tracking-widest font-bold text-emerald-600">Payment &amp; Order Registered</span>
-          <h1 class="font-royal text-3xl font-extrabold text-slate-900 mt-1">Thank You For Choosing Royalty!</h1>
-          <p class="text-sm text-slate-600 mt-2 max-w-lg mx-auto">
-            Your customized wedding stationery request has been received. Your invoice has been generated below.
-          </p>
-        </div>
-
-        <!-- Direct WhatsApp Dispatch to +91 97239 39407 -->
-        <div class="p-6 bg-brand-skyLight rounded-2xl border border-brand-skyBorder max-w-lg mx-auto text-center space-y-3">
-          <p class="text-xs font-bold text-brand-blueDark">
-            Send order specifications &amp; couple details directly to our WhatsApp atelier:
-          </p>
-          <a id="success-whatsapp-btn" href="#" target="_blank" class="w-full py-3.5 px-6 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-sm shadow-md inline-flex items-center justify-center gap-2">
-            <i data-lucide="message-circle" class="w-5 h-5"></i>
-            <span>Send Details on WhatsApp (+91 97239 39407)</span>
+        <h1 class="font-royal text-3xl font-extrabold text-slate-900">Order Placed Successfully!</h1>
+        <p class="text-sm text-slate-600">Your wedding invitation order is registered and transferred to our design atelier.</p>
+        
+        <div class="flex flex-wrap items-center justify-center gap-3 pt-2">
+          <a id="success-whatsapp-btn" href="#" target="_blank" class="px-6 py-3 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs flex items-center gap-2 shadow-md">
+            <i data-lucide="message-circle" class="w-4 h-4"></i> Dispatch Details to WhatsApp (+91 97239 39407)
           </a>
+          <button onclick="window.print()" class="px-6 py-3 rounded-xl bg-white border-2 border-slate-300 hover:bg-slate-50 text-slate-800 font-bold text-xs flex items-center gap-2 shadow-sm">
+            <i data-lucide="printer" class="w-4 h-4"></i> Print / Save Bill (Invoice)
+          </button>
         </div>
+      </div>
 
-        <!-- Printable Official Bill / Invoice Container -->
-        <div id="printable-invoice" class="text-left border-2 border-slate-200 rounded-2xl p-6 sm:p-8 bg-slate-50/50 space-y-6">
-          <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center border-b pb-4 gap-4">
-            <div>
-              <h2 class="font-royal text-xl font-bold text-slate-900">DESIGNS BY RAJORA</h2>
-              <p class="text-xs text-slate-500">Official Digital Stationery Invoice</p>
-              <p class="text-[11px] text-slate-500">Email: designs.by.rajora01@gmail.com | WhatsApp: +91 97239 39407</p>
+      <!-- Printable Invoice Sheet -->
+      <div id="printable-invoice" class="bg-white rounded-3xl border border-slate-300 p-8 sm:p-12 shadow-md space-y-8">
+        <!-- Invoice Header -->
+        <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center pb-6 border-b border-slate-200 gap-4">
+          <div class="flex items-center gap-3">
+            <div class="w-12 h-12 rounded-xl bg-brand-skyLight border border-brand-skyBorder p-1 flex items-center justify-center">
+              <svg viewBox="0 0 100 100" class="w-full h-full">
+                <path d="M26 22 L26 78 M26 22 C 54 22, 60 48, 26 50" fill="none" stroke="#0369a1" stroke-width="8" stroke-linecap="round"/>
+                <path d="M46 38 C 66 38, 76 50, 58 62 L74 78" fill="none" stroke="#f97316" stroke-width="7.5" stroke-linecap="round"/>
+              </svg>
             </div>
-            <div class="text-right">
-              <p class="text-xs font-mono font-bold text-brand-blueDark" id="inv-number">INV-2026-0000</p>
-              <p class="text-xs text-slate-500" id="inv-date">Date: 30 Oct 2026</p>
-              <span class="inline-block mt-1 px-2.5 py-0.5 rounded text-[10px] font-bold bg-emerald-100 text-emerald-800">PAID VIA UPI</span>
+            <div>
+              <h2 class="font-royal text-xl font-bold text-slate-900 leading-tight">DESIGNS BY RAJORA</h2>
+              <p class="text-[10px] text-slate-500 font-medium">Digital Wedding Stationery &amp; AI Invitations</p>
             </div>
           </div>
 
-          <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 text-xs">
-            <div>
-              <p class="font-bold text-slate-800">Billed To Customer:</p>
-              <p id="inv-customer-name" class="font-semibold text-slate-700">-</p>
-              <p id="inv-customer-phone" class="text-slate-600">-</p>
-              <p id="inv-customer-email" class="text-slate-600">-</p>
-            </div>
-            <div>
-              <p class="font-bold text-slate-800">Payment Reference:</p>
-              <p>UPI ID: <span class="font-mono">geetakatarmal2001@okaxis</span></p>
-              <p>Transaction / UTR: <span id="inv-utr" class="font-mono font-bold text-slate-700">-</span></p>
-              <p>Delivery: <span class="font-semibold text-emerald-700">Digital Lossless (WhatsApp &amp; Email)</span></p>
-            </div>
-          </div>
-
-          <div class="overflow-x-auto">
-            <table class="w-full text-xs text-left border-collapse">
-              <thead>
-                <tr class="border-b bg-slate-200/60 text-slate-700 font-bold">
-                  <th class="py-2 px-3">Item Description</th>
-                  <th class="py-2 px-3 text-center">Format</th>
-                  <th class="py-2 px-3 text-right">Price</th>
-                </tr>
-              </thead>
-              <tbody id="inv-table-body">
-                <!-- Dynamically populated -->
-              </tbody>
-              <tfoot class="border-t font-semibold">
-                <tr>
-                  <td colspan="2" class="py-2 px-3 text-right">Total Paid:</td>
-                  <td id="inv-final-total" class="py-2 px-3 text-right font-bold text-sm text-brand-orangeDark">₹0</td>
-                </tr>
-              </tfoot>
-            </table>
+          <div class="text-left sm:text-right">
+            <span class="px-3 py-1 rounded-full text-xs font-bold bg-emerald-100 text-emerald-800">TAX INVOICE / BILL</span>
+            <p class="text-xs font-bold text-slate-800 mt-2" id="inv-number">INV-2026-0001</p>
+            <p class="text-xs text-slate-500" id="inv-date">Date: 30 Oct 2026</p>
           </div>
         </div>
 
-        <div class="flex flex-wrap gap-4 justify-center pt-2">
-          <button onclick="window.print()" class="px-6 py-2.5 rounded-xl bg-slate-800 hover:bg-slate-900 text-white font-semibold text-xs flex items-center gap-2">
-            <i data-lucide="printer" class="w-4 h-4"></i> Print / Download Invoice
-          </button>
-          <button onclick="navigateTo('shop')" class="px-6 py-2.5 rounded-xl border border-slate-300 text-slate-700 font-semibold text-xs hover:bg-slate-50">
-            Continue Shopping
-          </button>
+        <!-- Seller and Buyer Grid -->
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-6 text-xs border-b border-slate-200 pb-6">
+          <div>
+            <span class="font-bold text-slate-500 uppercase tracking-wider block mb-1">Issued By:</span>
+            <p class="font-bold text-slate-800">Designs by Rajora Atelier</p>
+            <p class="text-slate-600">Email: designs.by.rajora01@gmail.com</p>
+            <p class="text-slate-600">WhatsApp: +91 97239 39407</p>
+            <p class="text-slate-600">UPI Id: geetakatarmal2001@okaxis</p>
+          </div>
+          <div class="sm:text-right">
+            <span class="font-bold text-slate-500 uppercase tracking-wider block mb-1">Billed To Customer:</span>
+            <p class="font-bold text-slate-800" id="inv-customer-name">Client Name</p>
+            <p class="text-slate-600" id="inv-customer-phone">+91 97239 39407</p>
+            <p class="text-slate-600" id="inv-customer-email">customer@gmail.com</p>
+            <p class="text-slate-600">Payment Reference (UTR): <span id="inv-utr" class="font-mono font-bold text-slate-800"></span></p>
+          </div>
+        </div>
+
+        <!-- Items Table -->
+        <div>
+          <table class="w-full text-left text-xs">
+            <thead>
+              <tr class="bg-slate-50 border-b text-slate-600">
+                <th class="py-2.5 px-3">Item Description</th>
+                <th class="py-2.5 px-3 text-center">Format</th>
+                <th class="py-2.5 px-3 text-right">Amount (INR)</th>
+              </tr>
+            </thead>
+            <tbody id="inv-table-body">
+              <!-- Rendered items -->
+            </tbody>
+          </table>
+        </div>
+
+        <!-- Bill Footer & Terms -->
+        <div class="pt-4 border-t border-slate-200 flex flex-col sm:flex-row justify-between items-start gap-4">
+          <div class="text-[11px] text-slate-500 max-w-sm space-y-1">
+            <p class="font-bold text-slate-700">Digital Delivery &amp; Revisions Terms:</p>
+            <p>1. Lossless digital proofs sent to client's WhatsApp within 12 to 24 hours.</p>
+            <p>2. Up to 2 rounds of complimentary text revisions included.</p>
+            <p>3. Support &amp; Concierge: +91 97239 39407.</p>
+          </div>
+          <div class="text-right w-full sm:w-auto">
+            <span class="text-xs text-slate-500">Total Net Amount Paid:</span>
+            <p class="text-2xl font-royal font-bold text-brand-orangeDark" id="inv-final-total">₹0</p>
+            <span class="inline-block mt-1 text-[10px] font-bold text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded">Prepaid &amp; Verified</span>
+          </div>
         </div>
 
       </div>
     </section>
 
     <!-- ========================================== -->
-    <!-- VIEW 8: INSTANT LIVE ADMIN CONSOLE         -->
+    <!-- VIEW 8: LIVE ADMIN MANAGEMENT CONSOLE       -->
+    <!-- PASSWORD PROTECTED (200112)                -->
     <!-- ========================================== -->
     <section id="view-admin" class="view-panel hidden py-10 px-4 sm:px-6 max-w-7xl mx-auto space-y-8">
       
-      <!-- Admin Top Banner -->
-      <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center bg-white p-6 rounded-3xl border border-slate-200 shadow-sm gap-4">
+      <!-- Top Admin Header -->
+      <div class="flex flex-col sm:flex-row sm:items-center justify-between pb-6 border-b border-slate-200 gap-4">
         <div>
-          <div class="flex items-center gap-2">
-            <h1 class="font-royal text-2xl font-bold text-slate-900">Admin Operations Console</h1>
-            <span class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-bold bg-emerald-100 text-emerald-800">
-              <span class="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-ping"></span> Live Realtime
-            </span>
+          <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-emerald-100 text-emerald-800 text-xs font-bold mb-2">
+            <span class="w-2 h-2 rounded-full bg-emerald-500 animate-ping"></span>
+            Live Operational Console
           </div>
-          <p class="text-xs text-slate-500 mt-1">Live incoming order listener, coupon studio, and product pricing catalogue.</p>
+          <h1 class="font-royal text-2xl sm:text-3xl font-bold text-slate-900">Designs by Rajora Atelier Admin</h1>
+          <p class="text-xs text-slate-500 mt-1">Live order tracking, real-time incoming orders, catalog monitoring &amp; promotional coupons.</p>
         </div>
-        
-        <div class="flex items-center gap-3">
-          <button onclick="simulateCustomerOrder()" class="px-4 py-2 bg-brand-skyLight border border-brand-skyBorder text-brand-blueDark rounded-xl text-xs font-bold hover:bg-sky-200 transition">
-            + Simulate Live Order
+
+        <div class="flex items-center gap-2">
+          <button onclick="simulateCustomerOrder()" class="px-3.5 py-2 rounded-xl bg-brand-orangeLight border border-brand-orangeBorder text-brand-orangeDark font-bold text-xs hover:bg-orange-100 flex items-center gap-1.5 shadow-sm">
+            <i data-lucide="zap" class="w-3.5 h-3.5"></i> + Simulate Live Order
           </button>
-          <button onclick="navigateTo('home')" class="px-4 py-2 bg-slate-100 text-slate-700 rounded-xl text-xs font-semibold hover:bg-slate-200">
+          <button onclick="navigateTo('home')" class="px-3.5 py-2 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-bold">
             Exit Admin
           </button>
         </div>
       </div>
 
-      <!-- Realtime Metric Cards -->
-      <div class="grid grid-cols-2 lg:grid-cols-4 gap-5">
+      <!-- Quick Metrics Counters -->
+      <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
         <div class="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm">
-          <span class="text-xs text-slate-500 font-medium">Total Live Orders</span>
-          <p id="admin-stat-orders" class="font-royal text-2xl font-bold text-slate-900 mt-1">0</p>
+          <span class="text-xs font-semibold text-slate-500 uppercase tracking-wider">Total Orders</span>
+          <p class="text-2xl font-bold text-slate-900 mt-1" id="admin-stat-orders">0</p>
+          <span class="text-[10px] text-emerald-600 font-bold">● Active sessions</span>
         </div>
         <div class="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm">
-          <span class="text-xs text-slate-500 font-medium">Verified Revenue</span>
-          <p id="admin-stat-revenue" class="font-royal text-2xl font-bold text-brand-orangeDark mt-1">₹0</p>
+          <span class="text-xs font-semibold text-slate-500 uppercase tracking-wider">Gross Revenue</span>
+          <p class="text-2xl font-bold text-brand-orangeDark mt-1" id="admin-stat-revenue">₹0</p>
+          <span class="text-[10px] text-slate-500 font-medium">All verified UPI</span>
         </div>
         <div class="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm">
-          <span class="text-xs text-slate-500 font-medium">Active Coupons</span>
-          <p id="admin-stat-coupons" class="font-royal text-2xl font-bold text-brand-blueDark mt-1">3</p>
+          <span class="text-xs font-semibold text-slate-500 uppercase tracking-wider">Live Catalog</span>
+          <p class="text-2xl font-bold text-brand-blueDark mt-1">23 Items</p>
+          <span class="text-[10px] text-emerald-600 font-bold">100% &gt; ₹999 Verified</span>
         </div>
         <div class="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm">
-          <span class="text-xs text-slate-500 font-medium">Listed Products</span>
-          <p class="font-royal text-2xl font-bold text-slate-800 mt-1">23</p>
+          <span class="text-xs font-semibold text-slate-500 uppercase tracking-wider">Active Coupons</span>
+          <p class="text-2xl font-bold text-slate-900 mt-1" id="admin-stat-coupons">3</p>
+          <span class="text-[10px] text-slate-500">₹1,000 floor locked</span>
         </div>
       </div>
 
-      <!-- Admin Tabs -->
-      <div class="bg-white rounded-3xl border border-slate-200 shadow-sm overflow-hidden">
-        <div class="border-b border-slate-200 px-6 py-4 flex gap-4 bg-slate-50">
-          <button onclick="switchAdminTab('orders')" id="tab-btn-orders" class="text-sm font-bold text-brand-blueAccent border-b-2 border-brand-blueAccent pb-1">
-            Live Orders Feed (<span id="live-order-count">0</span>)
-          </button>
-          <button onclick="switchAdminTab('coupons')" id="tab-btn-coupons" class="text-sm font-bold text-slate-500 hover:text-slate-800 pb-1">
-            Custom Coupon Studio
-          </button>
-          <button onclick="switchAdminTab('products')" id="tab-btn-products" class="text-sm font-bold text-slate-500 hover:text-slate-800 pb-1">
-            Product Catalogue Manager
-          </button>
-        </div>
+      <!-- Admin Tabs Navigation -->
+      <div class="flex border-b border-slate-200 space-x-6">
+        <button onclick="switchAdminTab('orders')" id="tab-btn-orders" class="text-sm font-bold text-brand-blueAccent border-b-2 border-brand-blueAccent pb-3 flex items-center gap-1.5">
+          <i data-lucide="package" class="w-4 h-4"></i> Live Orders (<span id="live-order-count">0</span>)
+        </button>
+        <button onclick="switchAdminTab('coupons')" id="tab-btn-coupons" class="text-sm font-bold text-slate-500 hover:text-slate-800 pb-3 flex items-center gap-1.5">
+          <i data-lucide="tag" class="w-4 h-4"></i> Coupon Engine
+        </button>
+        <button onclick="switchAdminTab('products')" id="tab-btn-products" class="text-sm font-bold text-slate-500 hover:text-slate-800 pb-3 flex items-center gap-1.5">
+          <i data-lucide="grid" class="w-4 h-4"></i> 23 Product Catalog
+        </button>
+      </div>
 
-        <!-- TAB 1: LIVE ORDERS FEED -->
-        <div id="admin-tab-orders" class="p-6">
+      <!-- Admin Tab 1: Live Orders Panel -->
+      <div id="admin-tab-orders" class="space-y-4">
+        <div class="bg-white rounded-3xl border border-slate-200 shadow-sm overflow-hidden">
+          <div class="p-4 bg-slate-50 border-b border-slate-200 flex justify-between items-center">
+            <h3 class="font-bold text-sm text-slate-800">Real-Time Incoming Customer Orders</h3>
+            <span class="text-xs text-slate-500 font-medium">Auto-refreshes immediately upon checkout</span>
+          </div>
           <div class="overflow-x-auto">
-            <table class="w-full text-xs text-left">
-              <thead>
-                <tr class="border-b bg-slate-100 text-slate-700">
+            <table class="w-full text-left text-xs">
+              <thead class="bg-slate-100/70 border-b text-slate-600">
+                <tr>
                   <th class="p-3">Order ID</th>
-                  <th class="p-3">Customer &amp; Phone</th>
-                  <th class="p-3">Ordered Items</th>
-                  <th class="p-3">Total Paid</th>
-                  <th class="p-3">UPI Ref (UTR)</th>
+                  <th class="p-3">Customer &amp; WhatsApp</th>
+                  <th class="p-3">Design Items</th>
+                  <th class="p-3">Amount</th>
+                  <th class="p-3">UPI UTR / Ref</th>
                   <th class="p-3">Status</th>
                   <th class="p-3 text-right">Actions</th>
                 </tr>
               </thead>
-              <tbody id="admin-orders-tbody">
-                <!-- Dynamically generated rows -->
+              <tbody id="admin-orders-tbody" class="divide-y divide-slate-100">
+                <!-- Dynamically populated live -->
               </tbody>
             </table>
           </div>
         </div>
+      </div>
 
-        <!-- TAB 2: COUPON CREATION & MANAGEMENT -->
-        <div id="admin-tab-coupons" class="p-6 hidden space-y-6">
-          <div class="grid grid-cols-1 lg:grid-cols-12 gap-8">
-            <!-- Add coupon form -->
-            <div class="lg:col-span-5 bg-slate-50 p-5 rounded-2xl border border-slate-200">
-              <h3 class="font-bold text-sm text-slate-900 mb-3">Create New Custom Coupon</h3>
-              <form id="create-coupon-form" onsubmit="handleCreateCoupon(event)" class="space-y-3 text-xs">
-                <div>
-                  <label class="block font-semibold text-slate-700 mb-1">Coupon Code (Uppercase)</label>
-                  <input type="text" id="new-code" required placeholder="e.g. FESTIVE200" class="w-full p-2 rounded-lg border uppercase font-mono">
-                </div>
-                <div class="grid grid-cols-2 gap-2">
-                  <div>
-                    <label class="block font-semibold text-slate-700 mb-1">Type</label>
-                    <select id="new-type" class="w-full p-2 rounded-lg border">
-                      <option value="fixed">Fixed (₹)</option>
-                      <option value="percent">Percentage (%)</option>
-                    </select>
-                  </div>
-                  <div>
-                    <label class="block font-semibold text-slate-700 mb-1">Discount Value</label>
-                    <input type="number" id="new-val" required min="50" max="1000" placeholder="200" class="w-full p-2 rounded-lg border">
-                  </div>
-                </div>
-                <p class="text-[11px] text-amber-700">Note: Even with discounts, minimum product payable remains ₹1,000.</p>
-                <button type="submit" class="w-full py-2 bg-brand-orangeDark text-white rounded-lg font-bold hover:bg-orange-700">
-                  Save &amp; Activate Coupon
-                </button>
-              </form>
-            </div>
-
-            <!-- Current coupons list -->
-            <div class="lg:col-span-7">
-              <h3 class="font-bold text-sm text-slate-900 mb-3">Active Promotional Codes</h3>
-              <div id="admin-coupon-list" class="space-y-2">
-                <!-- Rendered by JS -->
+      <!-- Admin Tab 2: Custom Coupon Management -->
+      <div id="admin-tab-coupons" class="hidden space-y-6">
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+          <!-- Create Coupon Form -->
+          <div class="bg-white p-6 rounded-3xl border border-slate-200 shadow-sm space-y-4">
+            <h3 class="font-bold text-sm text-slate-900 border-b pb-2">Create New Promo Code</h3>
+            <form onsubmit="handleCreateCoupon(event)" id="create-coupon-form" class="space-y-3 text-xs">
+              <div>
+                <label class="block font-semibold text-slate-700 mb-1">Coupon Code *</label>
+                <input type="text" id="new-code" required placeholder="e.g. WEDDING500" class="uppercase w-full p-2 rounded-xl border border-slate-300">
               </div>
+              <div>
+                <label class="block font-semibold text-slate-700 mb-1">Discount Type</label>
+                <select id="new-type" class="w-full p-2 rounded-xl border border-slate-300">
+                  <option value="fixed">Fixed Rupee Discount (₹)</option>
+                  <option value="percent">Percentage Discount (%)</option>
+                </select>
+              </div>
+              <div>
+                <label class="block font-semibold text-slate-700 mb-1">Discount Value *</label>
+                <input type="number" id="new-val" required min="1" placeholder="e.g. 250" class="w-full p-2 rounded-xl border border-slate-300">
+              </div>
+              <p class="text-[10px] text-slate-500 italic">
+                *The system enforces that items will NEVER drop below ₹1,000 under any circumstances.
+              </p>
+              <button type="submit" class="w-full py-2.5 rounded-xl bg-brand-blueAccent hover:bg-brand-blueDark text-white font-bold text-xs shadow">
+                Save &amp; Activate Coupon
+              </button>
+            </form>
+          </div>
+
+          <!-- Existing Coupons List -->
+          <div class="md:col-span-2 bg-white p-6 rounded-3xl border border-slate-200 shadow-sm space-y-3">
+            <h3 class="font-bold text-sm text-slate-900 border-b pb-2">Active Promotional Vouchers</h3>
+            <div id="admin-coupon-list" class="space-y-2 text-xs">
+              <!-- Rendered via JS -->
             </div>
           </div>
         </div>
+      </div>
 
-        <!-- TAB 3: PRODUCTS VIEW -->
-        <div id="admin-tab-products" class="p-6 hidden">
+      <!-- Admin Tab 3: Complete 23 Catalog Manager -->
+      <div id="admin-tab-products" class="hidden space-y-4">
+        <div class="bg-white rounded-3xl border border-slate-200 shadow-sm p-5 space-y-4">
+          <div class="flex justify-between items-center">
+            <h3 class="font-bold text-sm text-slate-800">Catalogue Audit (All 23 Luxury Products strictly &gt; ₹999)</h3>
+            <span class="text-xs text-brand-orangeDark font-bold">Minimum standard: ₹1,000+</span>
+          </div>
           <div class="overflow-x-auto">
-            <table class="w-full text-xs text-left">
-              <thead>
-                <tr class="border-b bg-slate-100 text-slate-700">
+            <table class="w-full text-left text-xs">
+              <thead class="bg-slate-50 border-b text-slate-600">
+                <tr>
                   <th class="p-3">Product Name</th>
                   <th class="p-3">Category</th>
-                  <th class="p-3">Delivery Format</th>
-                  <th class="p-3">Price (₹)</th>
-                  <th class="p-3">Price Safety Status</th>
+                  <th class="p-3">Format</th>
+                  <th class="p-3">Listed Price (₹)</th>
+                  <th class="p-3">Status</th>
                 </tr>
               </thead>
-              <tbody id="admin-products-tbody">
-                <!-- Populated via JS -->
+              <tbody id="admin-products-tbody" class="divide-y divide-slate-100">
+                <!-- Rendered dynamically -->
               </tbody>
             </table>
           </div>
         </div>
-
       </div>
+
     </section>
 
   </main>
 
-  <!-- ========================================== -->
-  <!-- CART SLIDE-OVER DRAWER                     -->
-  <!-- ========================================== -->
-  <div id="cart-drawer-backdrop" onclick="toggleCartDrawer(false)" class="fixed inset-0 bg-slate-900/40 backdrop-blur-sm z-50 hidden transition-opacity"></div>
-  <div id="cart-drawer" class="fixed right-0 top-0 bottom-0 w-full max-w-md bg-white z-50 shadow-2xl transform translate-x-full transition-transform duration-300 flex flex-col">
-    
-    <!-- Drawer Header (Light Blue) -->
-    <div class="p-5 border-b border-slate-200 flex items-center justify-between bg-brand-skyLight">
-      <div class="flex items-center gap-2">
-        <i data-lucide="shopping-bag" class="w-5 h-5 text-brand-blueDark"></i>
-        <h2 class="font-royal text-lg font-bold text-slate-900">Your Stationery Cart</h2>
-      </div>
-      <button onclick="toggleCartDrawer(false)" class="p-1 rounded-lg hover:bg-white text-slate-500">
-        <i data-lucide="x" class="w-5 h-5"></i>
-      </button>
-    </div>
+  <!-- ======================================================== -->
+  <!-- SLIDE-OVER SHOPPING CART DRAWER                          -->
+  <!-- ======================================================== -->
+  <div id="cart-drawer" class="fixed inset-0 z-50 overflow-hidden hidden" aria-labelledby="slide-over-title" role="dialog" aria-modal="true">
+    <div class="absolute inset-0 bg-slate-900/40 backdrop-blur-sm transition-opacity" onclick="toggleCartDrawer(false)"></div>
+    <div class="fixed inset-y-0 right-0 max-w-full flex pl-10">
+      <div class="w-screen max-w-md bg-white shadow-2xl flex flex-col">
+        <div class="p-5 bg-brand-skyLight border-b border-brand-skyBorder flex items-center justify-between">
+          <div class="flex items-center gap-2">
+            <i data-lucide="shopping-bag" class="w-5 h-5 text-brand-blueDark"></i>
+            <h2 class="font-royal text-lg font-bold text-brand-deepNavy">Your Atelier Selection</h2>
+          </div>
+          <button onclick="toggleCartDrawer(false)" class="p-2 text-slate-500 hover:text-slate-800 rounded-lg">
+            <i data-lucide="x" class="w-5 h-5"></i>
+          </button>
+        </div>
 
-    <!-- Drawer Items -->
-    <div id="drawer-cart-items" class="flex-1 overflow-y-auto p-5 space-y-4">
-      <!-- Items dynamically populated -->
-    </div>
+        <div id="drawer-items-list" class="flex-1 overflow-y-auto p-5 space-y-4">
+          <!-- Rendered by JS -->
+        </div>
 
-    <!-- Drawer Footer (Light Orange) -->
-    <div class="p-5 border-t border-brand-orangeBorder bg-brand-orangeLight space-y-3">
-      <div class="flex justify-between text-xs text-slate-700 font-semibold">
-        <span>Cart Items Subtotal:</span>
-        <span id="drawer-subtotal" class="font-bold text-slate-900">₹0</span>
+        <div class="p-5 bg-brand-skyCard border-t border-brand-skyBorder space-y-4">
+          <div class="flex items-center justify-between text-sm">
+            <span class="font-medium text-slate-600">Total Selection:</span>
+            <span id="drawer-subtotal" class="font-bold text-lg text-brand-deepNavy">₹0</span>
+          </div>
+          <div class="text-[11px] text-slate-500 bg-white p-2 rounded-lg border border-sky-200">
+            ✓ Lossless PDF / Ultra-HD MP4 delivery directly to your WhatsApp.
+          </div>
+          <div class="grid grid-cols-2 gap-2">
+            <button onclick="toggleCartDrawer(false); navigateTo('shop')" class="py-2.5 rounded-xl border border-slate-300 text-slate-700 text-xs font-bold hover:bg-slate-50">
+              Continue Shopping
+            </button>
+            <button onclick="toggleCartDrawer(false); navigateTo('checkout')" class="py-2.5 rounded-xl bg-brand-orangeAccent hover:bg-brand-orangeDark text-white text-xs font-bold shadow">
+              Proceed to Checkout
+            </button>
+          </div>
+        </div>
       </div>
-      <p class="text-[11px] text-slate-600">
-        Each item is customized with your names &amp; event schedule. Delivery via WhatsApp &amp; Email.
-      </p>
-      <button onclick="proceedToCheckout()" id="drawer-checkout-btn" class="w-full py-3.5 rounded-xl bg-brand-orangeAccent hover:bg-brand-orangeDark text-white font-bold text-sm shadow-md transition-all flex items-center justify-center gap-2">
-        <span>Proceed to Checkout</span>
-        <i data-lucide="arrow-right" class="w-4 h-4"></i>
-      </button>
     </div>
   </div>
 
@@ -1094,6 +1132,32 @@
       <a href="https://wa.me/919723939407" target="_blank" class="w-full py-3 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs flex items-center justify-center gap-2">
         <i data-lucide="message-circle" class="w-4 h-4"></i> Open Direct WhatsApp Chat
       </a>
+    </div>
+  </div>
+
+  <!-- ADMIN PASSCODE AUTHENTICATION MODAL -->
+  <div id="admin-auth-modal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 hidden items-center justify-center p-4">
+    <div class="bg-white rounded-3xl p-6 sm:p-8 max-w-sm w-full relative space-y-4 shadow-2xl border border-slate-200">
+      <button onclick="closeAdminAuthModal()" class="absolute top-4 right-4 text-slate-400 hover:text-slate-600">
+        <i data-lucide="x" class="w-5 h-5"></i>
+      </button>
+      <div class="w-12 h-12 rounded-2xl bg-brand-skyLight text-brand-blueDark flex items-center justify-center border border-brand-skyBorder">
+        <i data-lucide="shield" class="w-6 h-6"></i>
+      </div>
+      <div>
+        <h3 class="font-royal text-lg font-bold text-slate-900">Admin Live Console</h3>
+        <p class="text-xs text-slate-500 mt-1">Enter your atelier administrator passcode to access live orders and pricing controls.</p>
+      </div>
+      <form onsubmit="handleAdminLogin(event)" class="space-y-4">
+        <div>
+          <label class="block text-xs font-semibold text-slate-700 mb-1">Access Passcode</label>
+          <input type="password" id="admin-passcode-input" required placeholder="Enter passcode" class="w-full p-3 rounded-xl border border-slate-300 text-sm focus:outline-none focus:border-brand-blueAccent">
+          <p id="admin-auth-error" class="text-xs text-rose-500 font-semibold mt-1.5 hidden">Invalid administrator passcode. Please re-enter.</p>
+        </div>
+        <button type="submit" class="w-full py-3 rounded-xl bg-brand-blueAccent hover:bg-brand-blueDark text-white font-bold text-xs shadow-md transition">
+          Unlock Admin Portal
+        </button>
+      </form>
     </div>
   </div>
 
@@ -1211,6 +1275,7 @@
     let appliedCoupon = null;
     let activeCategoryFilter = 'ALL';
     let currentSelectedProduct = PRODUCTS[0];
+    let isAdminAuthenticated = false;
 
     // Active Coupons Store (Admin-managed)
     let coupons = [
@@ -1226,9 +1291,42 @@
     const formatINR = (amt) => '₹' + Math.round(amt).toLocaleString('en-IN');
 
     // ----------------------------------------------------
-    // 3. NAVIGATION & VIEW SWITCHING
+    // 3. NAVIGATION, ADMIN AUTH & VIEW SWITCHING
     // ----------------------------------------------------
+    function openAdminAuthModal() {
+      if (isAdminAuthenticated) {
+        navigateTo('admin');
+        return;
+      }
+      document.getElementById('admin-passcode-input').value = '';
+      document.getElementById('admin-auth-error').classList.add('hidden');
+      document.getElementById('admin-auth-modal').classList.remove('hidden');
+      document.getElementById('admin-auth-modal').classList.add('flex');
+    }
+
+    function closeAdminAuthModal() {
+      document.getElementById('admin-auth-modal').classList.add('hidden');
+      document.getElementById('admin-auth-modal').classList.remove('flex');
+    }
+
+    function handleAdminLogin(e) {
+      e.preventDefault();
+      const code = document.getElementById('admin-passcode-input').value.trim();
+      if (code === '200112') {
+        isAdminAuthenticated = true;
+        closeAdminAuthModal();
+        navigateTo('admin');
+        showToast('Admin Console Unlocked', '🛡️');
+      } else {
+        document.getElementById('admin-auth-error').classList.remove('hidden');
+      }
+    }
+
     function navigateTo(viewId) {
+      if (viewId === 'admin' && !isAdminAuthenticated) {
+        openAdminAuthModal();
+        return;
+      }
       document.querySelectorAll('.view-panel').forEach(el => el.classList.add('hidden'));
       const target = document.getElementById(`view-${viewId}`);
       if (target) {
@@ -1236,6 +1334,7 @@
         window.scrollTo({ top: 0, behavior: 'smooth' });
       }
       if (viewId === 'shop') renderCatalogue();
+      if (viewId === 'checkout') updateCheckoutQR();
       if (viewId === 'admin') refreshAdminDashboard();
       if (typeof lucide !== 'undefined') lucide.createIcons();
     }
@@ -1279,167 +1378,181 @@
     }
 
     // ----------------------------------------------------
-    // 4. RENDERING: HOMEPAGE & CATALOGUE
+    // 4. RENDERING CATALOGUE & HOMEPAGE (NO RASTER IMAGES)
     // ----------------------------------------------------
+    function getCardSvgBackground(category, icon) {
+      // Elegant, fast SVG vectors representing royal motifs without heavy image dependencies
+      return `
+        <div class="relative w-full aspect-[4/3] bg-gradient-to-br from-brand-skyCard via-white to-brand-orangeCard rounded-2xl flex flex-col items-center justify-center p-4 border border-slate-200 overflow-hidden group-hover:border-brand-orangeAccent transition">
+          <svg class="absolute inset-0 w-full h-full opacity-15" viewBox="0 0 100 100">
+            <circle cx="50" cy="50" r="40" fill="none" stroke="#0284c7" stroke-width="1.5" stroke-dasharray="3 3"/>
+            <polygon points="50,15 85,50 50,85 15,50" fill="none" stroke="#ea580c" stroke-width="1"/>
+            <circle cx="50" cy="50" r="20" fill="none" stroke="#0369a1" stroke-width="1"/>
+          </svg>
+          <span class="text-4xl mb-2 relative z-10 drop-shadow-sm">${icon}</span>
+          <span class="text-[10px] font-royal font-bold text-brand-blueDark tracking-wider uppercase bg-white/90 px-2 py-0.5 rounded-full border border-sky-200 shadow-sm relative z-10">
+            ${category} Edition
+          </span>
+          <span class="text-[9px] text-slate-400 mt-1 font-semibold uppercase tracking-widest relative z-10">Designs by Rajora Sample</span>
+        </div>
+      `;
+    }
+
     function renderHomeFeatured() {
       const container = document.getElementById('home-featured-grid');
       if (!container) return;
-      const featured = [PRODUCTS[0], PRODUCTS[1], PRODUCTS[12], PRODUCTS[13]];
-      container.innerHTML = featured.map(p => createProductCardHtml(p)).join('');
+      // Show first 4 best-sellers
+      const bestSellers = PRODUCTS.slice(0, 4);
+      container.innerHTML = bestSellers.map(p => `
+        <div class="bg-white rounded-3xl p-5 border border-brand-skyBorder hover:border-brand-orangeAccent transition-all shadow-sm hover:shadow-md flex flex-col justify-between group">
+          <div>
+            ${getCardSvgBackground(p.category, p.icon)}
+            <div class="mt-4">
+              <span class="text-[10px] font-bold text-brand-blueAccent uppercase tracking-wide">${p.format}</span>
+              <h3 class="font-royal text-base font-bold text-slate-900 mt-1 group-hover:text-brand-orangeDark transition-colors line-clamp-1">${p.name}</h3>
+              <p class="text-lg font-bold text-brand-orangeDark mt-1">${formatINR(p.price)}</p>
+              <ul class="mt-3 space-y-1 text-xs text-slate-600">
+                ${p.features.slice(0, 2).map(f => `<li class="flex items-center gap-1.5"><span class="text-brand-blueAccent">✓</span> ${f}</li>`).join('')}
+              </ul>
+            </div>
+          </div>
+          <div class="mt-5 pt-4 border-t border-slate-100 flex items-center gap-2">
+            <button onclick="viewProductDetail('${p.id}')" class="flex-1 py-2.5 rounded-xl bg-brand-skyLight hover:bg-sky-200 text-brand-blueDark font-bold text-xs transition">
+              View Details
+            </button>
+            <button onclick="quickAddToCart('${p.id}')" class="p-2.5 rounded-xl bg-brand-orangeAccent hover:bg-brand-orangeDark text-white transition shadow-sm" title="Add to Selection">
+              <i data-lucide="shopping-bag" class="w-4 h-4"></i>
+            </button>
+          </div>
+        </div>
+      `).join('');
     }
 
     function filterCategory(cat) {
       activeCategoryFilter = cat;
       const select = document.getElementById('catalogue-category-filter');
-      if (select) {
-        for (let opt of select.options) {
-          if (opt.value.toLowerCase().includes(cat.toLowerCase())) {
-            select.value = opt.value;
-            break;
-          }
-        }
-      }
+      if (select) select.value = cat;
     }
 
     function renderCatalogue() {
-      const container = document.getElementById('catalogue-grid');
-      if (!container) return;
+      const grid = document.getElementById('catalogue-grid');
+      if (!grid) return;
 
-      const searchVal = (document.getElementById('catalogue-search')?.value || '').toLowerCase();
-      const catVal = document.getElementById('catalogue-category-filter')?.value || 'ALL';
+      const searchInput = (document.getElementById('catalogue-search')?.value || '').toLowerCase();
+      const catFilter = document.getElementById('catalogue-category-filter')?.value || activeCategoryFilter;
       const sortVal = document.getElementById('catalogue-sort')?.value || 'default';
 
-      let list = [...PRODUCTS];
-
-      if (catVal !== 'ALL') {
-        list = list.filter(p => p.category.toLowerCase().includes(catVal.toLowerCase()));
-      }
-
-      if (searchVal) {
-        list = list.filter(p => p.name.toLowerCase().includes(searchVal) || p.category.toLowerCase().includes(searchVal));
-      }
+      let filtered = PRODUCTS.filter(p => {
+        const matchesSearch = p.name.toLowerCase().includes(searchInput) || p.features.some(f => f.toLowerCase().includes(searchInput));
+        const matchesCategory = (catFilter === 'ALL') || (p.category === catFilter);
+        return matchesSearch && matchesCategory;
+      });
 
       if (sortVal === 'low-high') {
-        list.sort((a, b) => a.price - b.price);
+        filtered.sort((a, b) => a.price - b.price);
       } else if (sortVal === 'high-low') {
-        list.sort((a, b) => b.price - a.price);
+        filtered.sort((a, b) => b.price - a.price);
       }
 
-      container.innerHTML = list.map(p => createProductCardHtml(p)).join('');
-      if (typeof lucide !== 'undefined') lucide.createIcons();
-    }
-
-    function createProductCardHtml(p) {
-      return `
-        <div class="bg-white rounded-2xl border border-slate-200 overflow-hidden shadow-sm hover:shadow-md hover:border-brand-skyBorder transition-all flex flex-col justify-between group">
-          <!-- Vector Art Badge Area (No external images) -->
-          <div class="p-6 bg-gradient-to-b from-sky-50 to-orange-50/50 border-b border-slate-100 flex flex-col items-center justify-center relative min-h-[170px]">
-            <span class="text-4xl mb-2 transform group-hover:scale-110 transition-transform">${p.icon}</span>
-            <div class="font-royal text-xs font-bold text-slate-800 tracking-wider text-center mt-1">
-              DESIGNS BY RAJORA
-            </div>
-            <span class="text-[10px] uppercase font-bold text-brand-blueDark tracking-widest mt-1 bg-white px-2 py-0.5 rounded-full border border-sky-200">
-              ${p.format}
-            </span>
+      if (filtered.length === 0) {
+        grid.innerHTML = `
+          <div class="col-span-full py-16 text-center text-slate-500">
+            <i data-lucide="search-x" class="w-10 h-10 mx-auto mb-2 text-slate-400"></i>
+            <p class="font-bold">No designs found matching your search criteria.</p>
+            <button onclick="document.getElementById('catalogue-search').value=''; filterCategory('ALL'); renderCatalogue();" class="mt-3 text-xs text-brand-blueAccent font-bold underline">Reset Filters</button>
           </div>
+        `;
+        if (typeof lucide !== 'undefined') lucide.createIcons();
+        return;
+      }
 
-          <!-- Product Details -->
-          <div class="p-5 flex-1 flex flex-col justify-between space-y-4">
-            <div>
-              <div class="flex items-center justify-between text-xs text-slate-500 mb-1">
-                <span class="font-semibold text-slate-600">${p.category}</span>
-                <span class="text-emerald-700 font-bold">12-24h Delivery</span>
-              </div>
-              <h3 class="font-bold text-slate-900 text-sm group-hover:text-brand-blueDark transition-colors leading-snug">
-                ${p.name}
-              </h3>
-              <ul class="mt-2.5 space-y-1 text-[11px] text-slate-600">
-                ${p.features.map(f => `<li class="flex items-center gap-1.5"><span class="text-brand-orangeAccent">•</span> ${f}</li>`).join('')}
+      grid.innerHTML = filtered.map(p => `
+        <div class="bg-white rounded-3xl p-5 border border-slate-200 hover:border-brand-orangeAccent transition-all shadow-sm hover:shadow-md flex flex-col justify-between group">
+          <div>
+            ${getCardSvgBackground(p.category, p.icon)}
+            <div class="mt-4">
+              <span class="text-[10px] font-bold text-brand-blueAccent uppercase tracking-wide">${p.format}</span>
+              <h3 class="font-royal text-base font-bold text-slate-900 mt-1 group-hover:text-brand-orangeDark transition-colors line-clamp-1">${p.name}</h3>
+              <p class="text-lg font-bold text-brand-orangeDark mt-1">${formatINR(p.price)}</p>
+              <ul class="mt-3 space-y-1 text-xs text-slate-600">
+                ${p.features.map(f => `<li class="flex items-center gap-1.5"><span class="text-brand-blueAccent">✓</span> ${f}</li>`).join('')}
               </ul>
             </div>
-
-            <div class="pt-3 border-t border-slate-100 flex items-center justify-between">
-              <div>
-                <span class="text-[10px] text-slate-400 block uppercase font-bold">Price</span>
-                <span class="font-royal text-lg font-bold text-brand-orangeDark">${formatINR(p.price)}</span>
-              </div>
-              <div class="flex gap-2">
-                <button onclick="viewProductDetail('${p.id}')" class="px-3 py-1.5 rounded-lg border border-sky-300 text-brand-blueDark hover:bg-sky-50 text-xs font-bold">
-                  Details
-                </button>
-                <button onclick="quickAddToCart('${p.id}')" class="px-3 py-1.5 rounded-lg bg-brand-blueAccent hover:bg-brand-blueDark text-white text-xs font-bold shadow-sm">
-                  Add
-                </button>
-              </div>
-            </div>
+          </div>
+          <div class="mt-5 pt-4 border-t border-slate-100 flex items-center gap-2">
+            <button onclick="viewProductDetail('${p.id}')" class="flex-1 py-2.5 rounded-xl bg-brand-skyLight hover:bg-sky-200 text-brand-blueDark font-bold text-xs transition">
+              View Details
+            </button>
+            <button onclick="quickAddToCart('${p.id}')" class="p-2.5 rounded-xl bg-brand-orangeAccent hover:bg-brand-orangeDark text-white transition shadow-sm" title="Add to Selection">
+              <i data-lucide="shopping-bag" class="w-4 h-4"></i>
+            </button>
           </div>
         </div>
-      `;
+      `).join('');
+
+      if (typeof lucide !== 'undefined') lucide.createIcons();
     }
 
     // ----------------------------------------------------
     // 5. PRODUCT DETAIL VIEW
     // ----------------------------------------------------
-    function viewProductDetail(productId) {
-      const product = PRODUCTS.find(x => x.id === productId);
-      if (!product) return;
-      currentSelectedProduct = product;
+    function viewProductDetail(prodId) {
+      const prod = PRODUCTS.find(p => p.id === prodId);
+      if (!prod) return;
+      currentSelectedProduct = prod;
 
       const container = document.getElementById('product-detail-content');
       container.innerHTML = `
-        <!-- Left Product Mockup Artwork -->
-        <div class="lg:col-span-5 bg-gradient-to-br from-sky-50 via-white to-orange-50 rounded-2xl border-2 border-brand-skyBorder p-8 flex flex-col items-center justify-center text-center min-h-[380px] relative">
-          <div class="w-24 h-24 rounded-full bg-white shadow-md border-2 border-brand-skyBorder flex items-center justify-center text-5xl mb-4">
-            ${product.icon}
+        <div class="lg:col-span-5 flex flex-col items-center justify-center">
+          <div class="w-full max-w-sm aspect-[4/5] bg-gradient-to-b from-brand-skyLight via-white to-brand-orangeLight rounded-3xl p-6 border-4 border-brand-skyBorder shadow-xl flex flex-col justify-between text-center relative overflow-hidden">
+            <div class="border-2 border-dashed border-sky-300 rounded-2xl p-6 h-full flex flex-col justify-between items-center bg-white/70">
+              <span class="text-xs uppercase tracking-widest font-bold text-brand-blueDark">॥ श्री गणेशाय नमः ॥</span>
+              <div>
+                <span class="text-5xl block mb-2">${prod.icon}</span>
+                <h3 class="font-royal text-xl font-bold text-slate-900">${prod.name}</h3>
+                <div class="w-12 h-0.5 bg-brand-orangeAccent mx-auto my-2"></div>
+                <p class="text-[11px] text-slate-500">Royal Digital Invitation Mockup</p>
+              </div>
+              <div class="bg-brand-skyCard p-3 rounded-xl border border-sky-200 w-full text-center">
+                <span class="text-xs font-bold text-brand-blueDark">Format: ${prod.format}</span>
+                <p class="text-[10px] text-slate-500 mt-0.5">High-Res Print &amp; WhatsApp Ready</p>
+              </div>
+              <span class="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Designs by Rajora • Royal Edition</span>
+            </div>
           </div>
-          <span class="font-royal text-xl font-bold text-slate-800">Designs by Rajora</span>
-          <span class="text-xs text-brand-blueDark font-bold mt-1 uppercase tracking-widest">${product.format}</span>
-          <div class="mt-6 p-4 bg-white rounded-xl border border-slate-200 text-xs text-slate-600 max-w-xs shadow-sm">
-            <p class="font-bold text-slate-800">Royal Digital Invitation Concept</p>
-            <p class="mt-1 text-[11px]">Fully customizable with couple names, event itinerary, and choice of Hindi/English typography.</p>
-          </div>
-          <span class="text-[10px] text-slate-400 mt-4 uppercase font-bold">Verified Luxury Stationery Masterpiece</span>
         </div>
 
-        <!-- Right Product Info & Actions -->
-        <div class="lg:col-span-7 space-y-6 flex flex-col justify-between">
+        <div class="lg:col-span-7 space-y-6">
           <div>
-            <div class="flex items-center gap-2 mb-2">
-              <span class="px-2.5 py-0.5 rounded-full text-xs font-semibold bg-sky-100 text-sky-800">${product.category}</span>
-              <span class="px-2.5 py-0.5 rounded-full text-xs font-semibold bg-emerald-100 text-emerald-800">Digital Delivery</span>
+            <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-brand-skyLight text-brand-blueDark text-xs font-bold mb-2 border border-brand-skyBorder">
+              <span>${prod.category} Collection</span>
             </div>
-            <h1 class="font-royal text-2xl sm:text-3xl font-extrabold text-slate-900">${product.name}</h1>
-            <div class="mt-3 flex items-baseline gap-3">
-              <span class="font-royal text-3xl font-bold text-brand-orangeDark">${formatINR(product.price)}</span>
-              <span class="text-xs text-slate-500 font-medium">All-Inclusive (No Hidden Fees)</span>
-            </div>
-            
-            <p class="text-xs sm:text-sm text-slate-600 mt-4 leading-relaxed">
-              Exquisitely engineered digital wedding stationery honoring Indian traditions. Delivered in lossless format suitable for WhatsApp transmission, 4K television display, and high-dpi physical prints.
-            </p>
-
-            <div class="mt-6 border-t border-slate-100 pt-4">
-              <h4 class="font-bold text-xs uppercase tracking-wider text-slate-700 mb-2">Included In This Package:</h4>
-              <div class="grid grid-cols-1 sm:grid-cols-2 gap-2 text-xs text-slate-600">
-                ${product.features.map(f => `<div class="flex items-center gap-2"><i data-lucide="check" class="w-3.5 h-3.5 text-emerald-600"></i><span>${f}</span></div>`).join('')}
-                <div class="flex items-center gap-2"><i data-lucide="check" class="w-3.5 h-3.5 text-emerald-600"></i><span>2 Rounds of Complimentary Edits</span></div>
-                <div class="flex items-center gap-2"><i data-lucide="check" class="w-3.5 h-3.5 text-emerald-600"></i><span>Turnaround: 12 to 24 Hours</span></div>
-              </div>
-            </div>
+            <h1 class="font-royal text-2xl sm:text-3xl font-extrabold text-slate-900">${prod.name}</h1>
+            <p class="text-2xl font-bold text-brand-orangeDark mt-2">${formatINR(prod.price)}</p>
+            <p class="text-xs text-slate-500 mt-1">Guaranteed luxury standard. Price remains above ₹1,000 even with coupon discounts.</p>
           </div>
 
-          <div class="space-y-3 pt-6 border-t border-slate-200">
-            <div class="flex flex-col sm:flex-row gap-3">
-              <button onclick="quickAddToCart('${product.id}')" class="flex-1 py-3.5 rounded-xl border-2 border-brand-blueAccent text-brand-blueDark hover:bg-sky-50 font-bold text-sm transition-all flex items-center justify-center gap-2">
-                <i data-lucide="shopping-bag" class="w-4 h-4"></i> Add to Cart
-              </button>
-              <button onclick="startPersonalizeWithProduct('${product.id}')" class="flex-1 py-3.5 rounded-xl bg-brand-orangeAccent hover:bg-brand-orangeDark text-white font-bold text-sm shadow-md transition-all flex items-center justify-center gap-2">
-                <i data-lucide="sparkles" class="w-4 h-4"></i> Personalize &amp; Order
-              </button>
-            </div>
-            <p class="text-center text-[11px] text-slate-500 font-medium">
-              Need custom couple art or urgent dispatch? WhatsApp: <strong class="text-slate-800">+91 97239 39407</strong>
-            </p>
+          <div class="space-y-2 text-xs text-slate-700 leading-relaxed border-t border-b border-slate-100 py-4">
+            <h3 class="font-bold text-slate-900 text-sm">Design Specifications &amp; Inclusions</h3>
+            <ul class="space-y-1.5 mt-2">
+              ${prod.features.map(f => `<li class="flex items-center gap-2"><i data-lucide="check-circle" class="w-4 h-4 text-emerald-600"></i> ${f}</li>`).join('')}
+              <li class="flex items-center gap-2"><i data-lucide="clock" class="w-4 h-4 text-brand-blueDark"></i> Rapid Turnaround: 12 to 24 Hours</li>
+              <li class="flex items-center gap-2"><i data-lucide="shield-check" class="w-4 h-4 text-brand-blueDark"></i> 2 Complimentary text &amp; venue revisions included</li>
+            </ul>
+          </div>
+
+          <div class="bg-brand-orangeLight border border-brand-orangeBorder p-4 rounded-2xl text-xs space-y-1">
+            <span class="font-bold text-brand-orangeDark">Direct WhatsApp Delivery Assurance:</span>
+            <p class="text-slate-700">Once your order is placed, your design draft will be directly sent to your phone via WhatsApp (+91 97239 39407) for inspection.</p>
+          </div>
+
+          <div class="flex flex-col sm:flex-row gap-3 pt-2">
+            <button onclick="quickAddToCart('${prod.id}')" class="flex-1 py-3.5 rounded-xl bg-brand-skyLight border-2 border-brand-skyBorder text-brand-blueDark font-bold text-sm hover:bg-sky-200 transition flex items-center justify-center gap-2">
+              <i data-lucide="shopping-bag" class="w-4 h-4"></i> Add to Selection
+            </button>
+            <button onclick="buyNowProduct('${prod.id}')" class="flex-1 py-3.5 rounded-xl bg-brand-orangeAccent hover:bg-brand-orangeDark text-white font-bold text-sm shadow-md transition flex items-center justify-center gap-2">
+              <i data-lucide="zap" class="w-4 h-4"></i> Personalize &amp; Buy Now
+            </button>
           </div>
         </div>
       `;
@@ -1448,20 +1561,14 @@
       if (typeof lucide !== 'undefined') lucide.createIcons();
     }
 
-    function startPersonalizeWithProduct(pid) {
-      const select = document.getElementById('custom-product-select');
-      if (select) select.value = pid;
-      navigateTo('customizer');
-    }
-
     // ----------------------------------------------------
-    // 6. SHOPPING CART ENGINE (STRICT >= ₹1,000 ENFORCEMENT)
+    // 6. CART MANAGEMENT
     // ----------------------------------------------------
-    function quickAddToCart(productId) {
-      const prod = PRODUCTS.find(p => p.id === productId);
+    function quickAddToCart(prodId) {
+      const prod = PRODUCTS.find(p => p.id === prodId);
       if (!prod) return;
 
-      const existing = cart.find(item => item.id === productId);
+      const existing = cart.find(item => item.id === prod.id && !item.customization);
       if (existing) {
         existing.quantity += 1;
       } else {
@@ -1476,119 +1583,120 @@
       }
 
       updateCartUI();
-      toggleCartDrawer(true);
-      showToast(`Added "${prod.name}" to cart`, '🛍️');
+      showToast(`${prod.name} added to cart!`, '🛍️');
     }
 
-    function updateCartUI() {
-      const totalCount = cart.reduce((sum, item) => sum + item.quantity, 0);
-      document.getElementById('cart-counter').innerText = totalCount;
+    function buyNowProduct(prodId) {
+      const prod = PRODUCTS.find(p => p.id === prodId);
+      if (!prod) return;
 
-      const container = document.getElementById('drawer-cart-items');
-      const checkoutItems = document.getElementById('checkout-cart-items');
-
-      if (cart.length === 0) {
-        container.innerHTML = `
-          <div class="text-center py-16 space-y-3">
-            <span class="text-4xl block">🛍️</span>
-            <p class="text-sm font-bold text-slate-700">Your cart is currently empty</p>
-            <p class="text-xs text-slate-500">Select any of our 23 luxury digital invitation suites</p>
-            <button onclick="toggleCartDrawer(false); navigateTo('shop')" class="mt-2 px-4 py-2 bg-brand-blueAccent text-white text-xs font-bold rounded-xl shadow-sm">
-              Browse Catalogue
-            </button>
-          </div>
-        `;
-        document.getElementById('drawer-subtotal').innerText = '₹0';
-        document.getElementById('drawer-checkout-btn').disabled = true;
-        if (checkoutItems) checkoutItems.innerHTML = '<p class="text-xs text-slate-500 italic">No items selected.</p>';
-        calculateTotals();
-        return;
-      }
-
-      document.getElementById('drawer-checkout-btn').disabled = false;
-
-      container.innerHTML = cart.map(item => `
-        <div class="p-3.5 rounded-2xl bg-white border border-slate-200 shadow-sm flex items-start justify-between gap-3">
-          <div class="flex-1">
-            <h4 class="text-xs font-bold text-slate-900 leading-snug">${item.name}</h4>
-            <span class="text-[10px] text-brand-blueDark font-medium">${item.format}</span>
-            ${item.customization ? `
-              <p class="text-[10px] text-amber-800 bg-amber-50 p-1 rounded mt-1 font-medium">
-                Names: ${item.customization.bride} &amp; ${item.customization.groom} (${item.customization.language})
-              </p>
-            ` : ''}
-            <div class="flex items-center gap-3 mt-2">
-              <span class="text-xs font-bold text-brand-orangeDark">${formatINR(item.price)}</span>
-              <div class="flex items-center border border-slate-200 rounded-lg bg-slate-50">
-                <button onclick="changeQty('${item.id}', -1)" class="px-2 py-0.5 text-xs font-bold text-slate-600 hover:bg-slate-200">-</button>
-                <span class="px-2 py-0.5 text-xs font-semibold">${item.quantity}</span>
-                <button onclick="changeQty('${item.id}', 1)" class="px-2 py-0.5 text-xs font-bold text-slate-600 hover:bg-slate-200">+</button>
-              </div>
-            </div>
-          </div>
-          <button onclick="removeFromCart('${item.id}')" class="text-slate-400 hover:text-rose-600 p-1">
-            <i data-lucide="trash-2" class="w-4 h-4"></i>
-          </button>
-        </div>
-      `).join('');
-
-      if (checkoutItems) {
-        checkoutItems.innerHTML = cart.map(item => `
-          <div class="flex items-center justify-between text-xs py-2 border-b border-orange-200/60">
-            <div>
-              <p class="font-bold text-slate-800">${item.name} × ${item.quantity}</p>
-              <p class="text-[10px] text-slate-500">${item.format}</p>
-            </div>
-            <span class="font-bold text-slate-800">${formatINR(item.price * item.quantity)}</span>
-          </div>
-        `).join('');
-      }
-
-      calculateTotals();
-      if (typeof lucide !== 'undefined') lucide.createIcons();
-    }
-
-    function changeQty(id, delta) {
-      const item = cart.find(x => x.id === id);
-      if (!item) return;
-      item.quantity += delta;
-      if (item.quantity <= 0) {
-        cart = cart.filter(x => x.id !== id);
-      }
-      updateCartUI();
-    }
-
-    function removeFromCart(id) {
-      cart = cart.filter(x => x.id !== id);
-      updateCartUI();
+      // Select in Customizer dropdown and redirect
+      const select = document.getElementById('custom-product-select');
+      if (select) select.value = prod.id;
+      navigateTo('customizer');
     }
 
     function toggleCartDrawer(open) {
       const drawer = document.getElementById('cart-drawer');
-      const backdrop = document.getElementById('cart-drawer-backdrop');
       if (open) {
-        backdrop.classList.remove('hidden');
-        drawer.classList.remove('translate-x-full');
+        drawer.classList.remove('hidden');
+        renderCartDrawer();
       } else {
-        backdrop.classList.add('hidden');
-        drawer.classList.add('translate-x-full');
+        drawer.classList.add('hidden');
       }
+      if (typeof lucide !== 'undefined') lucide.createIcons();
     }
 
-    function proceedToCheckout() {
-      toggleCartDrawer(false);
-      navigateTo('checkout');
+    function updateCartUI() {
+      const count = cart.reduce((sum, item) => sum + item.quantity, 0);
+      document.getElementById('cart-counter').innerText = count;
+      renderCartDrawer();
+      renderCheckoutCart();
+      calculateTotals();
+    }
+
+    function changeQuantity(index, delta) {
+      if (cart[index]) {
+        cart[index].quantity += delta;
+        if (cart[index].quantity <= 0) {
+          cart.splice(index, 1);
+        }
+      }
+      updateCartUI();
+    }
+
+    function removeFromCart(index) {
+      cart.splice(index, 1);
+      updateCartUI();
+      showToast('Item removed from cart', '🗑️');
+    }
+
+    function renderCartDrawer() {
+      const list = document.getElementById('drawer-items-list');
+      if (!list) return;
+
+      if (cart.length === 0) {
+        list.innerHTML = `
+          <div class="text-center py-16 text-slate-400">
+            <i data-lucide="shopping-bag" class="w-12 h-12 mx-auto mb-2 opacity-50"></i>
+            <p class="font-bold text-sm text-slate-600">Your cart is empty.</p>
+            <p class="text-xs text-slate-400 mt-1">Explore our 23 royal wedding designs!</p>
+          </div>
+        `;
+        if (typeof lucide !== 'undefined') lucide.createIcons();
+        return;
+      }
+
+      list.innerHTML = cart.map((item, idx) => `
+        <div class="bg-white p-3.5 rounded-2xl border border-slate-200 shadow-sm flex items-center justify-between gap-3">
+          <div class="flex-1 min-w-0">
+            <h4 class="font-bold text-xs text-slate-900 truncate">${item.name}</h4>
+            <p class="text-[11px] text-brand-orangeDark font-bold">${formatINR(item.price)} each</p>
+            ${item.customization ? `<span class="inline-block bg-orange-100 text-brand-orangeDark text-[9px] px-1.5 py-0.5 rounded font-bold">Personalized</span>` : ''}
+          </div>
+          <div class="flex items-center gap-2">
+            <div class="flex items-center border border-slate-200 rounded-lg">
+              <button onclick="changeQuantity(${idx}, -1)" class="px-2 py-0.5 text-xs text-slate-600 hover:bg-slate-100">-</button>
+              <span class="px-2 text-xs font-bold text-slate-800">${item.quantity}</span>
+              <button onclick="changeQuantity(${idx}, 1)" class="px-2 py-0.5 text-xs text-slate-600 hover:bg-slate-100">+</button>
+            </div>
+            <button onclick="removeFromCart(${idx})" class="text-rose-500 hover:text-rose-700 p-1">
+              <i data-lucide="trash-2" class="w-4 h-4"></i>
+            </button>
+          </div>
+        </div>
+      `).join('');
+
+      if (typeof lucide !== 'undefined') lucide.createIcons();
+    }
+
+    function renderCheckoutCart() {
+      const container = document.getElementById('checkout-cart-items');
+      if (!container) return;
+
+      if (cart.length === 0) {
+        container.innerHTML = `<p class="text-xs text-slate-500 italic">No items selected. Please add an invitation.</p>`;
+        return;
+      }
+
+      container.innerHTML = cart.map(item => `
+        <div class="flex justify-between items-start text-xs border-b border-orange-100 pb-2">
+          <div>
+            <span class="font-bold text-slate-800">${item.name}</span>
+            <span class="text-slate-500 block text-[10px]">Qty: ${item.quantity} × ${formatINR(item.price)}</span>
+            ${item.customization ? `<span class="text-brand-orangeDark text-[10px]">Bride: ${item.customization.bride} | Groom: ${item.customization.groom}</span>` : ''}
+          </div>
+          <span class="font-bold text-slate-900">${formatINR(item.price * item.quantity)}</span>
+        </div>
+      `).join('');
     }
 
     // ----------------------------------------------------
-    // 7. PRICING & PROMOTIONAL COUPON VALIDATION
-    // STRICT CRITERIA: Minimum payable price PER ITEM >= ₹1,000!
+    // 7. PRICING RULES & COUPON ENGINE (FLOOR ₹1,000)
     // ----------------------------------------------------
     function calculateTotals() {
       const subtotal = cart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
       const totalUnits = cart.reduce((sum, item) => sum + item.quantity, 0);
-      
-      const minimumAllowedFloor = totalUnits * 1000;
 
       let discount = 0;
       if (appliedCoupon && subtotal > 0) {
@@ -1597,49 +1705,84 @@
         } else if (appliedCoupon.type === 'percent') {
           discount = (subtotal * appliedCoupon.value) / 100;
         }
-
-        const maxPermittedDiscount = Math.max(0, subtotal - minimumAllowedFloor);
-        if (discount > maxPermittedDiscount) {
-          discount = maxPermittedDiscount;
-        }
       }
 
-      const finalTotal = Math.max(minimumAllowedFloor, subtotal - discount);
+      // Enforce strict floor: Final effective price cannot drop below ₹1,000 per unit
+      const minimumPermittedTotal = Math.max(1000 * totalUnits, 1000);
+      const theoreticalTotal = subtotal - discount;
 
-      document.getElementById('drawer-subtotal').innerText = formatINR(subtotal);
-      if (document.getElementById('co-subtotal')) document.getElementById('co-subtotal').innerText = formatINR(subtotal);
-      if (document.getElementById('co-discount')) document.getElementById('co-discount').innerText = '-' + formatINR(discount);
-      if (document.getElementById('co-total')) document.getElementById('co-total').innerText = formatINR(finalTotal);
+      if (theoreticalTotal < minimumPermittedTotal && subtotal > minimumPermittedTotal) {
+        discount = subtotal - minimumPermittedTotal;
+      } else if (theoreticalTotal < minimumPermittedTotal) {
+        discount = 0;
+      }
 
-      return { subtotal, discount, finalTotal };
+      const finalPayable = Math.max(subtotal - discount, subtotal > 0 ? minimumPermittedTotal : 0);
+
+      const subtotalEl = document.getElementById('co-subtotal');
+      const discountEl = document.getElementById('co-discount');
+      const totalEl = document.getElementById('co-total');
+      const drawerSubtotal = document.getElementById('drawer-subtotal');
+
+      if (subtotalEl) subtotalEl.innerText = formatINR(subtotal);
+      if (discountEl) discountEl.innerText = '-' + formatINR(discount);
+      if (totalEl) totalEl.innerText = formatINR(finalPayable);
+      if (drawerSubtotal) drawerSubtotal.innerText = formatINR(subtotal);
+
+      updateCheckoutQR(finalPayable);
+      return { subtotal, discount, finalPayable };
     }
 
     function applyCoupon() {
-      const codeInput = document.getElementById('coupon-input');
+      const input = document.getElementById('coupon-input');
       const msg = document.getElementById('coupon-msg');
-      const code = (codeInput?.value || '').trim().toUpperCase();
+      if (!input || !msg) return;
 
-      if (!code) return;
-
+      const code = input.value.trim().toUpperCase();
       const found = coupons.find(c => c.code === code && c.active);
+
       if (!found) {
-        msg.innerText = 'Invalid or expired promo code.';
-        msg.className = 'text-xs mt-1.5 text-rose-600 block';
+        msg.className = 'text-xs mt-1.5 text-rose-500 font-semibold block';
+        msg.innerText = 'Invalid or expired coupon code.';
         appliedCoupon = null;
-        calculateTotals();
-        return;
+      } else {
+        appliedCoupon = found;
+        msg.className = 'text-xs mt-1.5 text-emerald-600 font-semibold block';
+        msg.innerText = `Coupon ${code} applied successfully! (₹1,000 item floor enforced)`;
+      }
+      calculateTotals();
+    }
+
+    function updateCheckoutQR(overrideAmount) {
+      const qrImg = document.getElementById('checkout-upi-qr');
+      const qrAmountDisplay = document.getElementById('qr-payable-amount');
+      if (!qrImg || !qrAmountDisplay) return;
+
+      let amountToUse;
+      if (overrideAmount !== undefined) {
+        amountToUse = overrideAmount;
+      } else {
+        const subtotal = cart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
+        amountToUse = subtotal;
       }
 
-      appliedCoupon = found;
-      msg.innerText = `Coupon ${found.code} applied! (Protected ₹1,000 min product standard enforced)`;
-      msg.className = 'text-xs mt-1.5 text-emerald-700 font-semibold block';
-      calculateTotals();
-      showToast(`Promo applied: ${found.code}`, '🎉');
+      qrAmountDisplay.innerText = formatINR(amountToUse);
+
+      const upiUrl = `upi://pay?pa=geetakatarmal2001@okaxis&pn=DesignsByRajora&am=${amountToUse}&cu=INR`;
+      qrImg.src = `https://api.qrserver.com/v1/create-qr-code/?size=240x240&data=${encodeURIComponent(upiUrl)}`;
     }
 
     // ----------------------------------------------------
-    // 8. BESPOKE CUSTOMIZER SUBMISSION
+    // 8. BESPOKE CUSTOMIZER HANDLER
     // ----------------------------------------------------
+    function populateCustomizerDropdown() {
+      const select = document.getElementById('custom-product-select');
+      if (!select) return;
+      select.innerHTML = PRODUCTS.map(p => `
+        <option value="${p.id}">${p.name} — ${formatINR(p.price)}</option>
+      `).join('');
+    }
+
     function handleBespokeSubmit(e) {
       e.preventDefault();
       const prodId = document.getElementById('custom-product-select').value;
@@ -1650,16 +1793,16 @@
         bride: document.getElementById('custom-bride').value,
         groom: document.getElementById('custom-groom').value,
         parents: document.getElementById('custom-parents').value,
-        weddingDate: document.getElementById('custom-wedding-date').value,
+        date: document.getElementById('custom-wedding-date').value,
         venue: document.getElementById('custom-venue').value,
         subevents: document.getElementById('custom-subevents').value,
-        colorTheme: document.getElementById('custom-color-theme').value,
+        theme: document.getElementById('custom-color-theme').value,
         hashtag: document.getElementById('custom-hashtag').value
       };
 
       cart.push({
-        id: 'cust-' + Date.now(),
-        name: targetProd.name + ' (Customized)',
+        id: targetProd.id,
+        name: targetProd.name,
         price: targetProd.price,
         format: targetProd.format,
         quantity: 1,
@@ -1667,217 +1810,192 @@
       });
 
       updateCartUI();
-      showToast('Custom invitation added to cart!', '👑');
-      toggleCartDrawer(true);
-    }
-
-    function populateCustomizerDropdown() {
-      const select = document.getElementById('custom-product-select');
-      if (!select) return;
-      select.innerHTML = PRODUCTS.map(p => `
-        <option value="${p.id}">${p.name} — ${formatINR(p.price)}</option>
-      `).join('');
+      navigateTo('checkout');
+      showToast('Bespoke details saved to your order!', '✍️');
     }
 
     // ----------------------------------------------------
-    // 9. CHECKOUT, ORDER CREATION & WHATSAPP DISPATCH
+    // 9. CHECKOUT, INVOICE & REAL-TIME WHATSAPP DISPATCH
     // ----------------------------------------------------
     function processOrderPlacement(e) {
       e.preventDefault();
-
       if (cart.length === 0) {
-        showToast('Your cart is empty. Please select an invitation first.', '⚠️');
+        showToast('Your cart is empty. Add a product first.', '⚠️');
         return;
       }
 
-      const { subtotal, discount, finalTotal } = calculateTotals();
-      const buyerName = document.getElementById('buyer-name').value.trim();
-      const buyerPhone = document.getElementById('buyer-phone').value.trim();
-      const buyerEmail = document.getElementById('buyer-email').value.trim();
-      const buyerAddress = document.getElementById('buyer-address').value.trim() || 'India';
-      const buyerUTR = document.getElementById('buyer-utr').value.trim();
-
+      const { subtotal, discount, finalPayable } = calculateTotals();
       const orderId = 'RJR-' + Math.floor(100000 + Math.random() * 900000);
-      const invoiceNumber = 'INV-' + (new Date().getFullYear()) + '-' + Math.floor(1000 + Math.random() * 9000);
+      const invoiceNumber = 'INV-2026-' + Math.floor(1000 + Math.random() * 9000);
       const orderDate = new Date().toLocaleDateString('en-IN', { day: '2-digit', month: 'short', year: 'numeric' });
 
-      const newOrder = {
+      const customerName = document.getElementById('buyer-name').value;
+      const phone = document.getElementById('buyer-phone').value;
+      const email = document.getElementById('buyer-email').value;
+      const address = document.getElementById('buyer-address').value;
+      const utr = document.getElementById('buyer-utr').value;
+
+      const orderData = {
         orderId,
         invoiceNumber,
         date: orderDate,
-        customerName: buyerName,
-        phone: buyerPhone,
-        email: buyerEmail,
-        address: buyerAddress,
-        utr: buyerUTR,
-        items: JSON.parse(JSON.stringify(cart)),
+        customerName,
+        phone,
+        email,
+        address,
+        utr,
+        items: [...cart],
         subtotal,
         discount,
-        finalTotal,
+        finalTotal: finalPayable,
         status: 'Payment Confirmed'
       };
 
-      // Push to Live Admin Store immediately
-      liveOrders.unshift(newOrder);
-      refreshAdminDashboard();
+      // Push real-time to admin store
+      liveOrders.unshift(orderData);
 
-      // Setup Invoice Display on Confirmation View
+      // Render Tax Invoice Sheet
       document.getElementById('inv-number').innerText = invoiceNumber;
       document.getElementById('inv-date').innerText = 'Date: ' + orderDate;
-      document.getElementById('inv-customer-name').innerText = buyerName;
-      document.getElementById('inv-customer-phone').innerText = '+91 ' + buyerPhone;
-      document.getElementById('inv-customer-email').innerText = buyerEmail;
-      document.getElementById('inv-utr').innerText = buyerUTR;
-      document.getElementById('inv-final-total').innerText = formatINR(finalTotal);
+      document.getElementById('inv-customer-name').innerText = customerName;
+      document.getElementById('inv-customer-phone').innerText = '+91 ' + phone;
+      document.getElementById('inv-customer-email').innerText = email;
+      document.getElementById('inv-utr').innerText = utr;
+      document.getElementById('inv-final-total').innerText = formatINR(finalPayable);
 
-      const invTable = document.getElementById('inv-table-body');
-      invTable.innerHTML = newOrder.items.map(it => `
-        <tr class="border-b">
-          <td class="py-2 px-3">
-            <span class="font-bold text-slate-800">${it.name}</span>
-            ${it.customization ? `<span class="block text-[10px] text-slate-500">Bride &amp; Groom: ${it.customization.bride} &amp; ${it.customization.groom} | Date: ${it.customization.weddingDate || 'TBD'}</span>` : ''}
-          </td>
-          <td class="py-2 px-3 text-center text-slate-500">${it.format}</td>
-          <td class="py-2 px-3 text-right font-semibold">${formatINR(it.price * it.quantity)}</td>
-        </tr>
-      `).join('');
-
-      // Compose WhatsApp Message directly for +91 97239 39407
-      let waMessage = `*DESIGNS BY RAJORA — NEW ORDER*\n`;
-      waMessage += `━━━━━━━━━━━━━━━━━━━━━\n`;
-      waMessage += `*Order ID:* ${orderId}\n`;
-      waMessage += `*Customer:* ${buyerName}\n`;
-      waMessage += `*WhatsApp:* +91 ${buyerPhone}\n`;
-      waMessage += `*Email:* ${buyerEmail}\n`;
-      waMessage += `*UPI Ref (UTR):* ${buyerUTR}\n`;
-      waMessage += `*Paid Amount:* ${formatINR(finalTotal)} (to geetakatarmal2001@okaxis)\n`;
-      waMessage += `━━━━━━━━━━━━━━━━━━━━━\n`;
-      waMessage += `*ORDER ITEMS:*\n`;
-
-      newOrder.items.forEach((it, idx) => {
-        waMessage += `${idx + 1}. ${it.name} (Qty: ${it.quantity}) - ${formatINR(it.price * it.quantity)}\n`;
-        if (it.customization) {
-          waMessage += `   • Bride: ${it.customization.bride}\n`;
-          waMessage += `   • Groom: ${it.customization.groom}\n`;
-          waMessage += `   • Wedding Date: ${it.customization.weddingDate}\n`;
-          waMessage += `   • Venue: ${it.customization.venue}\n`;
-          waMessage += `   • Language: ${it.customization.language}\n`;
-          if (it.customization.subevents) waMessage += `   • Sub-Events: ${it.customization.subevents}\n`;
-        }
-      });
-
-      waMessage += `━━━━━━━━━━━━━━━━━━━━━\n`;
-      waMessage += `Please confirm receipt and send the invitation preview on this number.`;
-
-      const waUrl = `https://wa.me/919723939407?text=${encodeURIComponent(waMessage)}`;
-      document.getElementById('success-whatsapp-btn').href = waUrl;
-
-      // Reset cart and navigate
-      cart = [];
-      appliedCoupon = null;
-      updateCartUI();
-      navigateTo('order-success');
-    }
-
-    // ----------------------------------------------------
-    // 10. REALTIME ADMIN PORTAL FUNCTIONALITY
-    // ----------------------------------------------------
-    function refreshAdminDashboard() {
-      const totalRev = liveOrders.reduce((sum, o) => sum + o.finalTotal, 0);
-      document.getElementById('admin-stat-orders').innerText = liveOrders.length;
-      document.getElementById('admin-stat-revenue').innerText = formatINR(totalRev);
-      document.getElementById('live-order-count').innerText = liveOrders.length;
-      document.getElementById('admin-stat-coupons').innerText = coupons.filter(c => c.active).length;
-
-      const tbody = document.getElementById('admin-orders-tbody');
-      if (liveOrders.length === 0) {
-        tbody.innerHTML = `
-          <tr>
-            <td colspan="7" class="p-8 text-center text-slate-400 italic">
-              No live orders yet. Click "+ Simulate Live Order" to test instant incoming orders.
+      const tbody = document.getElementById('inv-table-body');
+      if (tbody) {
+        tbody.innerHTML = orderData.items.map(item => `
+          <tr class="border-b">
+            <td class="py-2.5 px-3">
+              <span class="font-bold text-slate-800">${item.name}</span>
+              ${item.customization ? `<span class="block text-[10px] text-slate-500">Bride: ${item.customization.bride} | Groom: ${item.customization.groom} (${item.customization.language})</span>` : ''}
             </td>
-          </tr>
-        `;
-      } else {
-        tbody.innerHTML = liveOrders.map(order => `
-          <tr class="border-b hover:bg-slate-50 transition">
-            <td class="p-3 font-mono font-bold text-slate-800">${order.orderId}</td>
-            <td class="p-3">
-              <span class="font-bold text-slate-900 block">${order.customerName}</span>
-              <a href="https://wa.me/91${order.phone}" target="_blank" class="text-emerald-700 font-semibold underline">+91 ${order.phone}</a>
-            </td>
-            <td class="p-3">
-              ${order.items.map(it => `<span class="inline-block bg-slate-100 rounded px-1.5 py-0.5 text-[10px] mr-1 mb-1 font-medium">${it.name}</span>`).join('')}
-            </td>
-            <td class="p-3 font-bold text-brand-orangeDark">${formatINR(order.finalTotal)}</td>
-            <td class="p-3 font-mono text-[11px] text-slate-600">${order.utr}</td>
-            <td class="p-3">
-              <select onchange="updateOrderStatus('${order.orderId}', this.value)" class="text-xs p-1 rounded border border-slate-200 bg-white">
-                <option value="Payment Confirmed" ${order.status === 'Payment Confirmed' ? 'selected' : ''}>Payment Confirmed</option>
-                <option value="Design in Progress" ${order.status === 'Design in Progress' ? 'selected' : ''}>Design in Progress</option>
-                <option value="Preview Ready" ${order.status === 'Preview Ready' ? 'selected' : ''}>Preview Ready</option>
-                <option value="Completed" ${order.status === 'Completed' ? 'selected' : ''}>Completed</option>
-              </select>
-            </td>
-            <td class="p-3 text-right">
-              <a href="https://wa.me/91${order.phone}?text=Hello%20${encodeURIComponent(order.customerName)},%20this%20is%20Designs%20by%20Rajora.%20Regarding%20your%20invitation%20order%20${order.orderId}:" target="_blank" class="p-1.5 rounded bg-emerald-100 text-emerald-800 hover:bg-emerald-200 inline-block" title="WhatsApp Customer">
-                <i data-lucide="message-circle" class="w-3.5 h-3.5"></i>
-              </a>
-            </td>
+            <td class="py-2.5 px-3 text-center text-slate-600">${item.format}</td>
+            <td class="py-2.5 px-3 text-right font-bold">${formatINR(item.price * item.quantity)}</td>
           </tr>
         `).join('');
       }
 
-      renderAdminCoupons();
-      renderAdminProducts();
-      if (typeof lucide !== 'undefined') lucide.createIcons();
+      // Build prefilled WhatsApp message to +91 97239 39407
+      let itemSummary = orderData.items.map(i => `• ${i.name} (Qty: ${i.quantity})`).join('\n');
+      let waMessage = `*NEW ORDER CONFIRMATION — DESIGNS BY RAJORA*\n\n` +
+        `*Order ID:* ${orderId}\n` +
+        `*Invoice:* ${invoiceNumber}\n` +
+        `*Client:* ${customerName}\n` +
+        `*Phone:* +91 ${phone}\n` +
+        `*Email:* ${email}\n` +
+        `*Amount Paid:* ${formatINR(finalPayable)}\n` +
+        `*UPI Ref (UTR):* ${utr}\n\n` +
+        `*Selected Stationery:*\n${itemSummary}\n\n` +
+        `Kindly generate the high-res proof draft and send to this WhatsApp.`;
+
+      const waLink = `https://wa.me/919723939407?text=${encodeURIComponent(waMessage)}`;
+      const waBtn = document.getElementById('success-whatsapp-btn');
+      if (waBtn) waBtn.href = waLink;
+
+      // Empty Cart & Navigate
+      cart = [];
+      appliedCoupon = null;
+      updateCartUI();
+      refreshAdminDashboard();
+      navigateTo('order-success');
+      showToast('Order registered and live invoice generated!', '🎉');
     }
 
+    // ----------------------------------------------------
+    // 10. REAL-TIME ADMIN DASHBOARD
+    // ----------------------------------------------------
     function switchAdminTab(tabName) {
-      document.getElementById('admin-tab-orders').classList.add('hidden');
-      document.getElementById('admin-tab-coupons').classList.add('hidden');
-      document.getElementById('admin-tab-products').classList.add('hidden');
-
-      document.getElementById('tab-btn-orders').className = 'text-sm font-bold text-slate-500 hover:text-slate-800 pb-1';
-      document.getElementById('tab-btn-coupons').className = 'text-sm font-bold text-slate-500 hover:text-slate-800 pb-1';
-      document.getElementById('tab-btn-products').className = 'text-sm font-bold text-slate-500 hover:text-slate-800 pb-1';
-
-      if (tabName === 'orders') {
-        document.getElementById('admin-tab-orders').classList.remove('hidden');
-        document.getElementById('tab-btn-orders').className = 'text-sm font-bold text-brand-blueAccent border-b-2 border-brand-blueAccent pb-1';
-      } else if (tabName === 'coupons') {
-        document.getElementById('admin-tab-coupons').classList.remove('hidden');
-        document.getElementById('tab-btn-coupons').className = 'text-sm font-bold text-brand-blueAccent border-b-2 border-brand-blueAccent pb-1';
-      } else if (tabName === 'products') {
-        document.getElementById('admin-tab-products').classList.remove('hidden');
-        document.getElementById('tab-btn-products').className = 'text-sm font-bold text-brand-blueAccent border-b-2 border-brand-blueAccent pb-1';
-      }
+      ['orders', 'coupons', 'products'].forEach(t => {
+        const panel = document.getElementById(`admin-tab-${t}`);
+        const btn = document.getElementById(`tab-btn-${t}`);
+        if (panel) panel.classList.toggle('hidden', t !== tabName);
+        if (btn) {
+          if (t === tabName) {
+            btn.className = 'text-sm font-bold text-brand-blueAccent border-b-2 border-brand-blueAccent pb-3 flex items-center gap-1.5';
+          } else {
+            btn.className = 'text-sm font-bold text-slate-500 hover:text-slate-800 pb-3 flex items-center gap-1.5';
+          }
+        }
+      });
+      if (tabName === 'coupons') renderAdminCoupons();
+      if (tabName === 'products') renderAdminProducts();
       if (typeof lucide !== 'undefined') lucide.createIcons();
     }
 
-    function updateOrderStatus(oid, newStatus) {
-      const target = liveOrders.find(o => o.orderId === oid);
-      if (target) {
-        target.status = newStatus;
-        showToast(`Order ${oid} status updated: ${newStatus}`, '🔄');
+    function refreshAdminDashboard() {
+      // Statistics
+      const ordersCountEl = document.getElementById('admin-stat-orders');
+      const revenueEl = document.getElementById('admin-stat-revenue');
+      const couponsEl = document.getElementById('admin-stat-coupons');
+      const liveOrderCountEl = document.getElementById('live-order-count');
+
+      const totalRevenue = liveOrders.reduce((sum, o) => sum + o.finalTotal, 0);
+      if (ordersCountEl) ordersCountEl.innerText = liveOrders.length;
+      if (liveOrderCountEl) liveOrderCountEl.innerText = liveOrders.length;
+      if (revenueEl) revenueEl.innerText = formatINR(totalRevenue);
+      if (couponsEl) couponsEl.innerText = coupons.filter(c => c.active).length;
+
+      // Render Orders Table
+      const tbody = document.getElementById('admin-orders-tbody');
+      if (!tbody) return;
+
+      if (liveOrders.length === 0) {
+        tbody.innerHTML = `
+          <tr>
+            <td colspan="7" class="p-6 text-center text-slate-400">
+              No orders registered yet. New customer checkouts appear here immediately!
+            </td>
+          </tr>
+        `;
+        return;
       }
+
+      tbody.innerHTML = liveOrders.map((ord, idx) => `
+        <tr class="hover:bg-slate-50">
+          <td class="p-3 font-mono font-bold text-slate-900">${ord.orderId}</td>
+          <td class="p-3">
+            <span class="font-bold text-slate-800 block">${ord.customerName}</span>
+            <span class="text-slate-500 text-[11px]">+91 ${ord.phone}</span>
+          </td>
+          <td class="p-3">
+            <span class="font-semibold text-slate-700">${ord.items.map(i => i.name).join(', ')}</span>
+            <span class="block text-[10px] text-slate-400">${ord.items.length} item(s)</span>
+          </td>
+          <td class="p-3 font-bold text-brand-orangeDark">${formatINR(ord.finalTotal)}</td>
+          <td class="p-3 font-mono text-[11px] text-slate-600">${ord.utr || 'Direct Verified'}</td>
+          <td class="p-3">
+            <span class="inline-flex items-center px-2 py-0.5 rounded text-[10px] font-bold bg-emerald-100 text-emerald-800">
+              ${ord.status}
+            </span>
+          </td>
+          <td class="p-3 text-right">
+            <a href="https://wa.me/91${ord.phone}" target="_blank" class="px-2.5 py-1 rounded-lg bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-[10px] inline-flex items-center gap-1">
+              WhatsApp
+            </a>
+          </td>
+        </tr>
+      `).join('');
     }
 
     function renderAdminCoupons() {
       const container = document.getElementById('admin-coupon-list');
       if (!container) return;
       container.innerHTML = coupons.map(c => `
-        <div class="p-3 bg-white border border-slate-200 rounded-xl flex items-center justify-between">
+        <div class="p-3 bg-slate-50 rounded-xl border border-slate-200 flex items-center justify-between">
           <div>
-            <span class="font-mono font-bold text-slate-800">${c.code}</span>
-            <span class="text-xs text-slate-500 ml-2">(${c.type === 'fixed' ? '₹' + c.value + ' OFF' : c.value + '% OFF'})</span>
+            <span class="font-mono font-bold text-slate-900 text-sm">${c.code}</span>
+            <span class="text-slate-500 text-[11px] block">
+              ${c.type === 'fixed' ? '₹' + c.value + ' OFF' : c.value + '% OFF'} • Floor Protection: Active
+            </span>
           </div>
           <div class="flex items-center gap-2">
-            <span class="px-2 py-0.5 rounded text-[10px] font-bold ${c.active ? 'bg-emerald-100 text-emerald-800' : 'bg-slate-100 text-slate-600'}">
-              ${c.active ? 'ACTIVE' : 'PAUSED'}
+            <span class="text-[10px] font-bold px-2 py-0.5 rounded ${c.active ? 'bg-emerald-100 text-emerald-800' : 'bg-slate-200 text-slate-600'}">
+              ${c.active ? 'Active' : 'Disabled'}
             </span>
-            <button onclick="toggleCouponStatus('${c.code}')" class="text-xs text-brand-blueDark hover:underline font-semibold">
-              ${c.active ? 'Disable' : 'Enable'}
+            <button onclick="toggleCouponStatus('${c.code}')" class="text-xs font-semibold text-brand-blueAccent underline">
+              ${c.active ? 'Deactivate' : 'Activate'}
             </button>
           </div>
         </div>
